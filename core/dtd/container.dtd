@@ -1,0 +1,14 @@
+<!ELEMENT container ( properties, inventory? ) >
+
+<!ELEMENT properties EMPTY >
+<!ATTLIST properties animationFile CDATA #REQUIRED >
+<!ATTLIST properties closeSoundFile CDATA #IMPLIED >
+<!ATTLIST properties frameHeight NMTOKEN #REQUIRED >
+<!ATTLIST properties frameWidth NMTOKEN #REQUIRED >
+<!ATTLIST properties framesPerSecond NMTOKEN #REQUIRED >
+<!ATTLIST properties name CDATA #REQUIRED >
+<!ATTLIST properties openSoundFile CDATA #IMPLIED >
+
+
+<!ENTITY % inventory SYSTEM "inventory.dtd">
+%inventory;

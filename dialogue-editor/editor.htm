@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Fabulae dialogue editor</title>
+
+  <style type="text/css">
+    body, select {
+      font: 10pt sans;
+    }
+    #mynetwork {
+      position:relative;
+      width: 100%;
+      height: 600px;
+      border: 1px solid lightgray;
+    }
+    table.legend_table {
+      font-size: 11px;
+      border-width:1px;
+      border-color:#d3d3d3;
+      border-style:solid;
+    }
+    table.legend_table,td {
+      border-width:1px;
+      border-color:#d3d3d3;
+      border-style:solid;
+      padding: 2px;
+    }
+    div.table_content {
+      width:80px;
+      text-align:center;
+    }
+    div.table_description {
+      width:100px;
+    }
+
+    #operation {
+      font-size:28px;
+    }
+    #network-popUp {
+      display:none;
+      position:absolute;
+      top:34px;
+      left:1px;
+      z-index:299;
+      background-color: #f9f9f9;
+      border-style:solid;
+      border-width:1px;
+      border-color: gray;
+      padding:10px;
+      text-align: center;
+    }
+    #upload-section {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-family: verdana;
+      font-size: 12px;
+    }
+    #upload-section input {
+      width: 185px;
+      overflow: hidden;
+    }
+    #upload-dialogue-file, #export, #upload-language-file, #dialogue-id-section {
+      display: inline-block;
+    }
+    #upload-section #dialogue-id {
+      width: 100px;
+    }
+    #export input {
+      width: initial;
+    }
+    .vis-close {
+      display: none !important;
+    }
+  </style>
+
+  <script type="text/javascript" src="lib/jquery/jquery.js"></script>
+  <script type="text/javascript" src="lib/xml2json/jquery.xml2json.js"></script>
+  <script type="text/javascript" src="lib/vis/vis.js"></script>
+  <script type="text/javascript" src="lib/jszip/jszip.js"></script>
+  <script type="text/javascript" src="lib/jszip/FileSaver.js"></script>
+  <script type="text/javascript" src="script/utils.js"></script>
+  <script type="text/javascript" src="script/fileHandling.js"></script>
+
+  <link href="lib/vis/vis.css" rel="stylesheet" type="text/css">
+
+  <script type="text/javascript">
+    var nodeCount = 1;
+    var network = null;
+    var data = {
+      nodes: new vis.DataSet([]),
+      edges: new vis.DataSet([])
+    };
+
+    function destroy() {
+      if (network !== null) {
+        network.destroy();
+        network = null;
+      }
+    }
+
+    function draw() {
+      destroy();
+
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var options = {
+        layout: {
+            hierarchical: {
+                direction: "UD",
+                sortMethod: "directed",
+                levelSeparation: 150
+            }
+        },
+        locale: 'en',
+        interaction:{
+          keyboard: {
+            enabled: true,
+            bindToWindow: false
+          },
+          navigationButtons: true
+        },
+        physics: {
+          hierarchicalRepulsion: {
+            nodeDistance: 250
+          }
+        },
+
+        manipulation: {
+          initiallyActive: true,
+          addNode: function (data, callback) {
+            // filling in the popup DOM elements
+            document.getElementById('operation').innerHTML = "Add";
+            document.getElementById('node-id').value = "";
+            document.getElementById('node-type').value = "pcTalk";
+            document.getElementById('node-label').value = "";
+            document.getElementById('node-condition').value = "";
+            document.getElementById('node-action').value = "";
+            document.getElementById('node-dialogueEnd').checked = data.dialogueEnd;
+            document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+            document.getElementById('cancelButton').onclick = clearPopUp.bind();
+            document.getElementById('network-popUp').style.display = 'block';
+            document.getElementById('node-label').focus();
+          },
+          editNode: function (data, callback) {
+            // filling in the popup DOM elements
+            document.getElementById('operation').innerHTML = "Edit";
+            document.getElementById('node-id').value = data.f_id;
+            document.getElementById('node-type').value = data.f_type;
+            document.getElementById('node-label').value = data.f_text || "";
+            document.getElementById('node-condition').value = data.f_condition || "";
+            document.getElementById('node-action').value = data.f_action || "";
+            document.getElementById('node-dialogueEnd').checked = data.f_dialogueEnd;
+            document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
+            document.getElementById('cancelButton').onclick = cancelEdit.bind(this,callback);
+            document.getElementById('network-popUp').style.display = 'block';
+          },
+          addEdge: function (data, callback) {
+            if (data.from == data.to) {
+              return;
+            }
+            else {
+              data.arrows = {
+                to: true
+              };
+
+              data.smooth = {
+                enabled: true,
+                type: "dynamic"
+              };
+
+              callback(data);
+            }
+          }
+        }
+      };
+      network = new vis.Network(container, data, options);
+      network.on("stabilized", function (params) {
+          network.setOptions({
+             physics: {
+              enabled: false
+            },
+            layout: {
+              hierarchical: false
+            }
+          });
+      });
+      network.fit();
+    }
+
+    function clearPopUp() {
+      document.getElementById('saveButton').onclick = null;
+      document.getElementById('cancelButton').onclick = null;
+      document.getElementById('network-popUp').style.display = 'none';
+    }
+
+    function cancelEdit(callback) {
+      clearPopUp();
+      callback(null);
+    }
+
+    function findNextId(type) {
+      var id;
+      var nodes = window.data.nodes;
+      var unique = false;
+      while (!unique) {
+        id = type+""+nodeCount++;
+        unique = nodes.get(id) === null;
+      }
+      return id;
+    }
+
+    function saveData(data,callback) {
+      var newType = document.getElementById('node-type').value;
+      var typeChanged = data.f_type !== newType;
+      data.f_type = newType;
+      data.f_text = document.getElementById('node-label').value;
+      data.f_condition = document.getElementById('node-condition').value;
+      data.f_action = document.getElementById('node-action').value;
+      data.f_dialogueEnd = document.getElementById('node-dialogueEnd').checked;
+
+      if (!document.getElementById('node-id').value || typeChanged) {
+        data.f_id = findNextId(data.f_type);
+      }
+
+      data.label = Utils.wordwrap(data.f_text.substring(0, 100), 40, "\n")+"...";
+      data.title = Utils.wordwrap(data.f_text, 40, "<br>");
+
+      var isGreeting = data.f_type === "greeting";
+      var isNPC = data.f_type === "npcTalk";
+
+      data.shape = 'box';
+      data.color = isGreeting ? Utils.greetingColor : (isNPC ? Utils.npcColor : (data.f_dialogueEnd ? Utils.endColor : Utils.pcColor));
+      data.font = {size:20};
+      data.physics = true;
+      clearPopUp();
+      callback(data);
+    }
+
+    function initialize() {
+      draw();
+      document.getElementById('dialogueFileButton').addEventListener('change', handleDialogueFileUpload, false);
+      document.getElementById('languageFileButton').addEventListener('change', handleLanguageFileUpload, false);
+      document.getElementById('exportButton').addEventListener('click', handleExport, false);
+    }
+    
+    window.onbeforeunload = function(){
+	  return 'Are you sure you want to leave?';
+	};
+  </script>
+</head>
+
+<body onload="initialize();">
+<div style="position: relative;">
+  <div id="network-popUp">
+    <span id="operation">node</span> <br>
+    <table style="margin:auto; text-align: left">
+      <tbody>
+        <tr>
+          <td>ID</td>
+          <td><input id="node-id" disabled="true"></td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td>
+              <select id="node-type" style="width: 100%;">
+                <option value="pcTalk" selected="selected">PC</option>
+                <option value="npcTalk" selected="selected">NPC</option>
+                <option value="greeting" selected="selected">Greeting</option>
+              </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Text</td>
+          <td><textarea id="node-label" cols="40" rows="6"></textarea></td>
+        </tr>
+        <tr>
+          <td>Condition</td>
+          <td><textarea id="node-condition" cols="40" rows="3"></textarea></td>
+        </tr>
+        <tr>
+          <td>Action</td>
+          <td><textarea id="node-action" cols="40" rows="3"></textarea></td>
+        </tr>
+        <tr>
+          <td>Dialogue end</td>
+          <td><input type="checkbox" id="node-dialogueEnd"></td>
+        </tr>
+      </tbody>
+    </table>
+    <input value="save" id="saveButton" type="button">
+    <input value="cancel" id="cancelButton" type="button">
+  </div>
+  <div id="mynetwork">
+      <div tabindex="900" style="position: relative; overflow: hidden; width: 100%; height: 100%;" class="vis-network">
+          <canvas style="position: relative; width: 100%; height: 100%;"></canvas>
+          <div style="display: none;" class="vis-manipulation"></div>
+          <div style="display: block;" class="vis-edit-mode">
+              <div class="vis-button vis-edit vis-edit-mode">
+                  <div class="vis-label">Edit</div>
+              </div>
+          </div>
+          <div style="display: none;" class="vis-close"></div>
+      </div>
+  </div>
+  <div id="upload-section" >
+   <div id="dialogue-id-section">ID: <input id="dialogue-id"></div>
+   <div id="upload-dialogue-file">Dialogue: <input type="file" id="dialogueFileButton" name="files[]" /></div>
+   <div id="upload-language-file">Language: <input type="file" id="languageFileButton" name="files[]" /></div>
+   <div id="export"><input type="button" id="exportButton" value="Export"></div>
+  </div>
+</div>
+
+</body>
+
+</html>

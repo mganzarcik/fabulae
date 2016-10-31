@@ -1,0 +1,34 @@
+<!ELEMENT weapon ( properties, triggers?, equipCondition?, modifiers*, effects? ) >
+
+<!ELEMENT effects ANY >
+
+<!ELEMENT properties ( name?, description? ) >
+<!ATTLIST properties name CDATA #IMPLIED >
+<!ATTLIST properties description CDATA #IMPLIED >
+<!ATTLIST properties groups CDATA #REQUIRED >
+<!ATTLIST properties inventoryIconFile CDATA #REQUIRED >
+<!ATTLIST properties mapIconFile CDATA #REQUIRED >
+<!ATTLIST properties skill NMTOKEN #REQUIRED >
+<!ATTLIST properties weaponBonus NMTOKEN #REQUIRED >
+<!ATTLIST properties weaponDamageMax NMTOKEN #REQUIRED >
+<!ATTLIST properties weaponDamageMin NMTOKEN #REQUIRED >
+<!ATTLIST properties weight NMTOKEN #REQUIRED >
+<!ATTLIST properties requiredSkillLevel  NMTOKEN #IMPLIED >
+<!ATTLIST properties emittedLight  NMTOKEN #IMPLIED >
+<!ATTLIST properties isTwoHanded  (true | false) #IMPLIED >
+<!ATTLIST properties isRanged  (true | false) #IMPLIED >
+<!ATTLIST properties cost  NMTOKEN #REQUIRED >
+<!ATTLIST properties projectile CDATA #IMPLIED >
+<!ATTLIST properties model CDATA #IMPLIED >
+<!ELEMENT name ( #PCDATA ) >
+
+<!ELEMENT description ( #PCDATA ) >
+
+<!ELEMENT onPickUp ( condition | action)* >
+
+<!ELEMENT onEquip ( condition | action )* >
+
+<!ELEMENT triggers ( onPickUp?, onEquip? ) >
+
+<!ENTITY % modifiers SYSTEM "modifiers.dtd">
+%modifiers;

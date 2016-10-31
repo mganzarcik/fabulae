@@ -1,0 +1,21 @@
+<!ELEMENT shield ( properties, equipCondition?, modifiers?, emittedLight? ) >
+
+<!ENTITY % modifiers SYSTEM "modifiers.dtd">
+%modifiers;
+
+<!ELEMENT equipCondition ANY >
+
+<!ELEMENT properties EMPTY >
+<!ATTLIST properties description CDATA #REQUIRED >
+<!ATTLIST properties groups CDATA #REQUIRED >
+<!ATTLIST properties inventoryIconFile CDATA #REQUIRED >
+<!ATTLIST properties mapIconFile CDATA #REQUIRED >
+<!ATTLIST properties name CDATA #REQUIRED >
+<!ATTLIST properties armorRating NMTOKEN #REQUIRED >
+<!ATTLIST properties weight NMTOKEN #REQUIRED >
+<!ATTLIST properties cost NMTOKEN #REQUIRED >
+<!ATTLIST properties slots CDATA #IMPLIED >
+<!ATTLIST properties model CDATA #IMPLIED >
+
+<!ENTITY % light SYSTEM "emittedLight.dtd">
+%light;

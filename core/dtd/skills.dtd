@@ -1,0 +1,5 @@
+<!ELEMENT skill EMPTY >
+<!ATTLIST skill id NMTOKEN #REQUIRED >
+<!ATTLIST skill value NMTOKEN #REQUIRED >
+
+<!ELEMENT skills ( skill+ ) >

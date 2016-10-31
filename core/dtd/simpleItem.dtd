@@ -1,0 +1,29 @@
+<!ELEMENT simpleItem ( import?, properties, triggers? ) >
+
+<!ELEMENT properties  ( name?, description? )  >
+<!ATTLIST properties description CDATA #IMPLIED >
+<!ATTLIST properties groups CDATA #IMPLIED >
+<!ATTLIST properties inventoryIconFile CDATA #REQUIRED >
+<!ATTLIST properties mapIconFile CDATA #REQUIRED >
+<!ATTLIST properties name CDATA #IMPLIED >
+<!ATTLIST properties maxStackSize NMTOKEN #IMPLIED >
+<!ATTLIST properties isGold CDATA #IMPLIED >
+<!ATTLIST properties isWater CDATA #IMPLIED >
+<!ATTLIST properties isFood CDATA #IMPLIED >
+<!ATTLIST properties weight NMTOKEN #IMPLIED >
+<!ATTLIST properties cost NMTOKEN #REQUIRED >
+<!ATTLIST properties model NMTOKEN #IMPLIED >
+<!ATTLIST properties slots CDATA #IMPLIED >
+
+<!ELEMENT name ( #PCDATA ) >
+
+<!ELEMENT description ( #PCDATA ) >
+
+<!ELEMENT condition ANY >
+<!ELEMENT action ANY >
+
+<!ELEMENT onPickUp ( condition | action)* >
+
+<!ELEMENT onEquip ( condition | action )* >
+
+<!ELEMENT triggers ( onPickUp?, onEquip? ) >

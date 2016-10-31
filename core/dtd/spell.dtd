@@ -1,0 +1,49 @@
+<!ELEMENT spell ( name, description, iconFile, characterSound?, rank, level?, sp?, ap?, hp?, mp?, canBeCast?, combatOnly, automaticOnHitAnimation?, animationState?, learnRequirements?, activationRequirements?, foci?, modifiers?, target?, projectile?, effects? ) >
+
+<!ELEMENT name  ( #PCDATA ) >
+
+<!ELEMENT description  ( #PCDATA ) >
+
+<!ELEMENT iconFile  ( #PCDATA ) >
+
+<!ELEMENT characterSound ( #PCDATA ) > 
+
+<!ELEMENT rank  (#PCDATA)>
+
+<!ELEMENT level  ( #PCDATA ) >
+
+<!ELEMENT sp  ( #PCDATA ) >
+
+<!ELEMENT ap  ( #PCDATA ) >
+
+<!ELEMENT hp  ( #PCDATA ) >
+
+<!ELEMENT mp  ( #PCDATA ) >
+
+<!ELEMENT canBeCast  ( #PCDATA ) >
+
+<!ELEMENT combatOnly  ( #PCDATA ) >
+
+<!ELEMENT automaticOnHitAnimation ( #PCDATA ) >
+
+<!ELEMENT animationState  ANY >
+
+<!ELEMENT learnRequirements  ANY >
+
+<!ELEMENT activationRequirements  ANY >
+
+<!ELEMENT projectile  ( #PCDATA ) >
+
+<!ELEMENT foci  (item+) >
+
+<!ELEMENT item EMPTY >
+<!ATTLIST item id NMTOKEN #REQUIRED  >
+<!ATTLIST item consumed (true|false) #IMPLIED >
+
+<!ELEMENT effects  ANY >
+
+<!ENTITY % modifiers SYSTEM "modifiers.dtd">
+%modifiers;
+
+<!ENTITY % target SYSTEM "targettype.dtd">
+%target;

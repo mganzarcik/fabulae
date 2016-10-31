@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gameOptions>
+	<screenWidth>1920</screenWidth>
+	<screenHeight>1000</screenHeight>
+	<fullscreen>false</fullscreen>
+	<scrollSpeed>40.0</scrollSpeed>
+	<tooltipDelay>0.3</tooltipDelay>
+	<audioSoundEffectsVolume>0.9</audioSoundEffectsVolume>
+	<audioMusicEffectsVolume>0.9</audioMusicEffectsVolume>
+	<audioUIEffectsVolume>0.1</audioUIEffectsVolume>
+	<characterBarks>false</characterBarks>
+	<combatMoveSpeed>2.8</combatMoveSpeed>
+	<moveMouse>false</moveMouse>
+	<keyBindings>
+		<multi_select>130,129</multi_select>
+		<select_all>70</select_all>
+		<move_only>59</move_only>
+		<highlight_usables>61</highlight_usables>
+		<quick_save>248</quick_save>
+		<quick_load>252</quick_load>
+		<pause>62</pause>
+		<end_turn>66</end_turn>
+		<confirm>66</confirm>
+		<cancel>131</cancel>
+		<move_to_junk>130,129</move_to_junk>
+		<move_to_inventory>60,59</move_to_inventory>
+		<toggle_grid>35</toggle_grid>
+		<display_inventory>37</display_inventory>
+		<display_perks>31</display_perks>
+		<display_active_effects>33</display_active_effects>
+		<display_use_perk>44</display_use_perk>
+		<display_journal>38</display_journal>
+		<display_character_edit>50</display_character_edit>
+		<display_spellbook>47</display_spellbook>
+		<display_formation_editor>34</display_formation_editor>
+		<rest>46</rest>
+		<display_map>41</display_map>
+		<sneak>29</sneak>
+		<disarm>32</disarm>
+		<detect>48</detect>
+		<lockpick>40</lockpick>
+	</keyBindings>
+</gameOptions>

@@ -1,0 +1,6 @@
+<!ELEMENT lock EMPTY>
+
+<!ATTLIST lock isPickable (true|false) #IMPLIED >
+<!ATTLIST lock isLocked (true|false) #IMPLIED >
+<!ATTLIST lock lockLevel NMTOKEN #IMPLIED >
+<!ATTLIST lock keyId CDATA #IMPLIED >

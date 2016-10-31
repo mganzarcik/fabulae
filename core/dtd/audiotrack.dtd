@@ -1,0 +1,7 @@
+<!ELEMENT track EMPTY >
+<!ATTLIST track filename CDATA #REQUIRED >
+<!ATTLIST track chanceToPlay NMTOKEN #IMPLIED >
+<!ATTLIST track volumeModifier NMTOKEN #IMPLIED >
+<!ATTLIST track loop NMTOKEN #IMPLIED >
+<!ATTLIST track replay NMTOKEN #IMPLIED >
+<!ATTLIST track delay NMTOKEN #IMPLIED >

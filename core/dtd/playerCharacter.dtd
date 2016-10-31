@@ -1,0 +1,9 @@
+<!ELEMENT playerCharacter ( import?, properties, ai?, stats?, skills?, perks?, spells?, variables?, visited?, inventory?, actions?, forbiddenActions?, onDeath? ) >
+
+<!ENTITY % character SYSTEM "nonPlayerCharacter.dtd">
+%character;
+
+<!ATTLIST properties selected (true|false)  #IMPLIED >
+<!ATTLIST properties playerEditable (true|false)  #IMPLIED >
+<!ATTLIST properties role NMTOKEN  #IMPLIED >
+

@@ -1,0 +1,21 @@
+<!ELEMENT projectile ( animationFile?, animationInfoFile?, particleEffect?, scalingMethod?, speed, xOffsetStart?, yOffsetStart?, xOffsetEnd?, yOffsetEnd?, moveDelay?, fixedOnOrigin?, light?, sounds?) >
+
+<!ELEMENT animationFile ( #PCDATA ) >
+<!ELEMENT animationInfoFile ( #PCDATA ) >
+<!ELEMENT particleEffect ( #PCDATA ) >
+<!ELEMENT scalingMethod (  #PCDATA ) >
+<!ELEMENT speed ( #PCDATA ) >
+<!ELEMENT light ( #PCDATA ) >
+<!ELEMENT xOffsetStart ( #PCDATA ) >
+<!ELEMENT yOffsetStart ( #PCDATA ) >
+<!ELEMENT xOffsetEnd ( #PCDATA ) >
+<!ELEMENT yOffsetEnd ( #PCDATA ) >
+<!ELEMENT moveDelay ( #PCDATA ) >
+<!ELEMENT fixedOnOrigin ( #PCDATA ) >
+<!ELEMENT sounds ( onStart?, onHit?, during?  ) >
+<!ELEMENT onStart ( track )* >
+<!ELEMENT onHit ( track )* >
+<!ELEMENT during ( track )* >
+
+<!ENTITY % audiotrack SYSTEM "audiotrack.dtd">
+%audiotrack;

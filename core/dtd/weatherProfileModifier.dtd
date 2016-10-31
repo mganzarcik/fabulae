@@ -1,0 +1,12 @@
+<!ELEMENT weatherProfileModifier ( temperature?, precipitation? ) >
+
+<!ELEMENT temperature ( min?, max? ) >
+	<!ELEMENT min ( #PCDATA ) >
+	<!ELEMENT max ( #PCDATA ) >
+	
+<!ELEMENT precipitation ( chanceForSmall?, chanceForMedium?, chanceForHigh?, durationMin?, durationMax? ) >
+	<!ELEMENT chanceForSmall ( #PCDATA ) >
+	<!ELEMENT chanceForMedium ( #PCDATA ) >
+	<!ELEMENT chanceForHigh ( #PCDATA ) >
+	<!ELEMENT durationMin ( #PCDATA ) >
+	<!ELEMENT durationMax ( #PCDATA ) >

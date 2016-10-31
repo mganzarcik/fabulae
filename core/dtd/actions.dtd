@@ -1,0 +1,4 @@
+<!ELEMENT actions ( wanderAction*, moveToAction*, openAction*, pickUpAction*, talkToAction*, attackAction*, flickerAction*, wiggleAction*, castSpellAction*, usePerkAction* ) >
+
+<!ENTITY % actionDefinitions SYSTEM "actionDefinitions.dtd">
+%actionDefinitions;

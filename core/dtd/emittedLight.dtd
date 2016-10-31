@@ -1,0 +1,7 @@
+<!ELEMENT emittedLight ( color, radius, class ) >
+
+<!ELEMENT color ( #PCDATA )>
+
+<!ELEMENT radius ( #PCDATA )>
+
+<!ELEMENT class ( #PCDATA )>

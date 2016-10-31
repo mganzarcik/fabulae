@@ -1,0 +1,5 @@
+<!ELEMENT faction ( properties? | disposition? ) >
+
+<!ELEMENT properties ANY >
+
+<!ELEMENT disposition ANY >

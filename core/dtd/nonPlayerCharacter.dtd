@@ -1,0 +1,7 @@
+<!ELEMENT nonPlayerCharacter ( import?, properties, ai?, stats?, skills?, perks?, spells?, variables?, visited?, inventory?, actions?, forbiddenActions?, onDeath? ) >
+
+<!ATTLIST properties chatter NMTOKEN #IMPLIED >
+<!ATTLIST properties dialogueId NMTOKEN #IMPLIED >
+
+<!ENTITY % baseCharacter SYSTEM "character.dtd">
+%baseCharacter;

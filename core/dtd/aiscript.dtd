@@ -1,0 +1,7 @@
+<!ELEMENT AIScript ( import*, combat*, peace* ) >
+
+<!ELEMENT combat ( #PCDATA ) >
+<!ATTLIST combat id CDATA #IMPLIED >
+
+<!ELEMENT peace ( #PCDATA ) >
+<!ATTLIST peace id CDATA #IMPLIED >

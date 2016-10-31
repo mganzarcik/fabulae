@@ -1,0 +1,64 @@
+<!ELEMENT wanderAction EMPTY >
+<!ATTLIST wanderAction radius NMTOKEN #REQUIRED >
+<!ATTLIST wanderAction chanceToMove NMTOKEN #REQUIRED >
+<!ATTLIST wanderAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT moveToAction EMPTY >
+<!ATTLIST moveToAction x NMTOKEN #REQUIRED >
+<!ATTLIST moveToAction y NMTOKEN #REQUIRED >
+<!ATTLIST moveToAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT openAction EMPTY >
+<!ATTLIST openAction target CDATA #REQUIRED >
+<!ATTLIST openAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT pickUpAction EMPTY >
+<!ATTLIST pickUpAction target CDATA #REQUIRED >
+<!ATTLIST pickUpAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT talkToAction EMPTY >
+<!ATTLIST talkToAction target CDATA #REQUIRED >
+<!ATTLIST talkToAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT attackAction EMPTY >
+<!ATTLIST attackAction target CDATA #REQUIRED >
+<!ATTLIST attackAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT flickerAction EMPTY >
+<!ATTLIST flickerAction duration NMTOKEN #IMPLIED >
+<!ATTLIST flickerAction flickDuration NMTOKEN #IMPLIED >
+<!ATTLIST flickerAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT wiggleAction EMPTY >
+<!ATTLIST wiggleAction radius NMTOKEN #IMPLIED >
+<!ATTLIST wiggleAction speed NMTOKEN #IMPLIED >
+<!ATTLIST wiggleAction duration NMTOKEN #IMPLIED >
+<!ATTLIST wiggleAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT castSpellAction EMPTY >
+<!ATTLIST castSpellAction spell CDATA #REQUIRED >
+<!ATTLIST castSpellAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT usePerkAction EMPTY >
+<!ATTLIST usePerkAction perk CDATA #REQUIRED >
+<!ATTLIST usePerkAction pausableOnly (true|false) #IMPLIED >
+
+<!ELEMENT disarmTrapAction EMPTY >
+<!ATTLIST disarmTrapAction x NMTOKEN #REQUIRED >
+<!ATTLIST disarmTrapAction y NMTOKEN #REQUIRED >
+
+<!ELEMENT lockpickAction EMPTY >
+<!ATTLIST lockpickAction x NMTOKEN #REQUIRED >
+<!ATTLIST lockpickAction y NMTOKEN #REQUIRED >
+
+<!ELEMENT useGameObjectAction EMPTY >
+<!ATTLIST useGameObjectAction target CDATA #REQUIRED >
+
+<!ELEMENT useInventoryItemAction EMPTY >
+<!ATTLIST useInventoryItemAction x NMTOKEN #REQUIRED >
+<!ATTLIST useInventoryItemAction y NMTOKEN #REQUIRED >
+<!ATTLIST useInventoryItemAction id CDATA #REQUIRED >
+
+<!ELEMENT enterDoorTransitionAction EMPTY >
+<!ATTLIST enterDoorTransitionAction x NMTOKEN #REQUIRED >
+<!ATTLIST enterDoorTransitionAction y NMTOKEN #REQUIRED >

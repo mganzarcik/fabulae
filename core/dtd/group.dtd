@@ -1,0 +1,27 @@
+<!ELEMENT characterGroup ( properties, members, formation  ) >
+
+<!ELEMENT properties ( name?, description? )  >
+<!ATTLIST properties name CDATA #IMPLIED >
+<!ATTLIST properties description CDATA #IMPLIED >
+<!ATTLIST properties audioProfile CDATA #IMPLIED >
+<!ATTLIST properties speed NMTOKEN #IMPLIED > <!-- required -->
+<!ATTLIST properties aiScript CDATA #IMPLIED > 
+<!ATTLIST properties model CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties faction CDATA #IMPLIED >
+<!ATTLIST properties global (true | false) #IMPLIED >
+
+<!ELEMENT name ( #PCDATA ) >
+<!ELEMENT description ( #PCDATA ) >
+
+<!ELEMENT members ( member+ )>
+
+<!ELEMENT formation ( member+ )>
+
+<!ELEMENT member EMPTY >
+<!-- for children of members-->
+<!ATTLIST member type CDATA #IMPLIED >
+<!-- for children of formation -->
+<!ATTLIST member index CDATA #IMPLIED >
+<!ATTLIST member xOffset CDATA #IMPLIED >
+<!ATTLIST member yOffset CDATA #IMPLIED >
+

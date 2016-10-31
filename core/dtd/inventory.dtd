@@ -1,0 +1,20 @@
+<!ELEMENT inventory ( equipped?, backPack?, quickUse?, merchant? ) >
+
+<!ELEMENT backPack ( item+ ) >
+
+<!ELEMENT equipped ( item+ ) >
+
+<!ELEMENT quickUse ( item+ ) >
+
+<!ELEMENT merchant ( item+ ) >
+
+<!ELEMENT item EMPTY >
+<!ATTLIST item id NMTOKEN #IMPLIED  >
+<!ATTLIST item slot NMTOKEN #IMPLIED >
+<!ATTLIST item groups CDATA #IMPLIED >
+<!ATTLIST item stackSize NMTOKEN #IMPLIED >
+<!ATTLIST item maxStackSize NMTOKEN #IMPLIED >
+<!ATTLIST item minStackSize NMTOKEN #IMPLIED >
+<!ATTLIST item ownerCharacter CDATA #IMPLIED >
+<!ATTLIST item ownerFaction CDATA #IMPLIED >
+<!ATTLIST item ownerFixed (true | false) #IMPLIED> 

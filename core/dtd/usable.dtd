@@ -1,0 +1,46 @@
+<!ENTITY % inventory SYSTEM "inventory.dtd">
+%inventory;
+
+<!ENTITY % lock SYSTEM "lock.dtd">
+%lock;
+
+<!ELEMENT usable ( import?, properties?, lock?, trap?, stateMachine?, inventory? ) >
+
+<!ELEMENT trap EMPTY >
+<!ATTLIST trap trapId CDATA #IMPLIED >
+
+<!ELEMENT import EMPTY >
+<!ATTLIST import filename CDATA #IMPLIED >
+
+<!ELEMENT properties EMPTY >
+<!ATTLIST properties name CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties description CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties animationTextureFile CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties animationInfoFile CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties orientation CDATA #IMPLIED >
+<!ATTLIST properties blockingPath (true | false) #IMPLIED >
+<!ATTLIST properties blockingSight (true | false) #IMPLIED >
+<!ATTLIST properties drawIfNotInLOS (true | false) #IMPLIED >
+<!ATTLIST properties isUsable (true | false) #IMPLIED >
+<!ATTLIST properties apCostToUse NMTOKEN  #IMPLIED >
+<!ATTLIST properties projectileOriginXOffset NMTOKEN  #IMPLIED >
+<!ATTLIST properties projectileOriginYOffset NMTOKEN  #IMPLIED >
+<!ATTLIST properties notUsableDuringCombat (true | false) #IMPLIED >
+<!ATTLIST properties actionKey CDATA #IMPLIED >
+
+<!ELEMENT stateMachine ( startState, endState?, state* ) >
+<!ATTLIST stateMachine fireActionOnStart (true | false) #IMPLIED >
+
+<!ELEMENT state ( action?, transition* ) >
+<!ATTLIST state id CDATA #REQUIRED >
+<!ATTLIST state startState (true | false) #IMPLIED >
+<!ATTLIST state animationState CDATA #IMPLIED >
+
+<!ELEMENT action ANY >
+<!ELEMENT condition ANY >
+
+<!ELEMENT transition  ( condition? ) >
+<!ATTLIST transition event CDATA #REQUIRED >
+<!ATTLIST transition toState CDATA #REQUIRED >
+
+<!ELEMENT effects  ANY >

@@ -1,0 +1,12 @@
+<!ENTITY % actions SYSTEM "actions.dtd">
+%actions;
+
+<!ELEMENT light ( properties, actions? ) >
+
+<!ELEMENT properties EMPTY >
+
+<!ATTLIST properties color CDATA #REQUIRED >
+<!ATTLIST properties radius NMTOKEN #REQUIRED >
+<!ATTLIST properties coneDegree NMTOKEN #IMPLIED >
+<!ATTLIST properties isSunlight (true|false) #IMPLIED >
+<!ATTLIST properties isConeLight (true|false) #IMPLIED >

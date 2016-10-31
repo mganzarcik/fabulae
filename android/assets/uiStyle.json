@@ -1,0 +1,79 @@
+{
+
+com.badlogic.gdx.graphics.Color: {
+	white: { a: 1, b: 1, g: 1, r: 1 },
+	light_gray: { r: 0.75, g: 0.75, b: 0.75, a: 0.8 },
+	medium_gray: { r: 0.55, g: 0.55, b: 0.55, a: 0.8 },
+	medium_dark_gray: { r: 0.40, g: 0.40, b: 0.40, a: 0.8 },
+	dark_gray: { r: 0.25, g: 0.25, b: 0.25, a: 0.8 },
+	darkest_grey: { r: 0.15, g: 0.15, b: 0.15, a: 0.8 }
+},
+
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	small: { 
+		file: fonts\\Roboto-Regular.ttf,
+		size: 15
+ 	},
+	normal: { 
+		file: fonts\\Roboto-Regular.ttf,
+		size: 17
+ 	},
+	subheading: { 
+		file: fonts\\Roboto-Bold.ttf,
+		size: 19
+ 	},
+	heading: { 
+		file: fonts\\Roboto-Bold.ttf,
+		size: 21
+ 	}
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	pane-light_gray: { name: white, color: light_gray },
+	pane-medium_gray: { name: white, color: medium_gray },
+	pane-dark_gray: { name: white, color: dark_gray },
+	pane-darkest_grey: { name: white, color: darkest_grey },
+	pane-black: { name: white, color: { r: 0, g: 0, b: 0, a: 0.8 } },
+	pane-black-opaque: { name: white, color: { r: 0, g: 0, b: 0, a: 1 } },
+	pane-light-red: { name: white, color: { r: 1, g: 0.5, b: 0.5, a: 0.8 } },
+	pane-red: { name: white, color: { r: 1, g: 0, b: 0, a: 0.8 } },
+	scrollarea: { name: white_10px, color: { r: 0, g: 0, b: 0, a: 0.5 } },
+	scrollbar: { name: white_10px, color: { r: 0.55, g: 0.55, b: 0.55, a: 0.8 } },
+	progressbar: { name: white_10px_v, color: { r: 0.55, g: 0.55, b: 0.55, a: 0.8 } },
+	progressbar_before: { name: white_10px_v, color: { r: 1, g: 0, b: 0, a: 0.8 } },
+	progressbar_after: { name: white_10px_v, color: { r: 0, g: 1, b: 0, a: 0.8 } }	
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: { titleFont: heading, background: pane-darkest_grey }
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: { font: normal }
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: { background: pane-black, vScroll: scrollarea, vScrollKnob: scrollbar, hScroll: scrollarea, hScrollKnob: scrollbar }
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	frame: {}
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: { up: pane-dark_gray, down: pane-light_gray, checked: pane-dark_gray, checkedOver: pane-light_gray, over: pane-light_gray, font: subheading}
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: { 
+	default: {font: normal, fontColorSelected: white, fontColorUnselected: light_gray, selection: scrollbar, background: pane-darkest_grey } 
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
+	default: { font: subheading, fontColor: white, disabledFontColor: medium_gray, background: pane-darkest_grey, backgroundOver: pane-medium_gray, backgroundOpen: pane-darkest_grey, backgroundDisabled: pane-black, listStyle:default, scrollStyle: default }
+},
+
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	progressDialogBar: { background: pane-dark_gray, knob: progressbar }
+}
+
+}

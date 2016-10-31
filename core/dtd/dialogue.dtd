@@ -1,0 +1,32 @@
+<!ELEMENT dialogue ( import?, title?, (banter | greeting | npcTalk | pcTalk )* ) >
+<!ATTLIST dialogue title NMTOKEN #IMPLIED >
+
+<!ELEMENT title ( #PCDATA ) >
+
+<!ATTLIST banter id NMTOKEN #REQUIRED >
+<!ATTLIST banter npc NMTOKEN #IMPLIED >
+
+<!ELEMENT banter ( action | text )* >
+<!ATTLIST banter id NMTOKEN #REQUIRED >
+<!ATTLIST banter npc NMTOKEN #IMPLIED >
+
+<!ELEMENT greeting (banter | pcTalk | action | condition | image? | text )* >
+<!ATTLIST greeting id NMTOKEN #REQUIRED >
+
+<!ELEMENT npcTalk ( banter | pcTalk | action | condition | image? | text )* >
+<!ATTLIST npcTalk id NMTOKEN #REQUIRED >
+
+<!ELEMENT pcTalk ( npcTalk | action | condition | text )* >
+<!ATTLIST pcTalk endOfConversation (true|false) #IMPLIED >
+<!ATTLIST pcTalk isYes (true|false) #IMPLIED >
+<!ATTLIST pcTalk id NMTOKEN #REQUIRED >
+
+<!ELEMENT action ANY >
+
+<!ELEMENT condition ANY >
+
+<!ELEMENT image ( #PCDATA ) >
+
+<!ELEMENT text ( #PCDATA ) >
+<!ATTLIST text pc NMTOKEN #IMPLIED >
+

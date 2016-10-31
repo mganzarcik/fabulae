@@ -1,0 +1,52 @@
+<!ELEMENT location ( import?, properties?, triggers?, activityModifiers?, weatherModifiers?, music?, sound?, combatMaps?, encounters?  ) >
+
+<!ELEMENT activityModifiers ( hunting?, swimming?, climbing?, waterSearching?, sneaking?)>
+
+<!ELEMENT import EMPTY >
+<!ATTLIST import filename CDATA #IMPLIED >
+
+<!ELEMENT weatherModifiers ( #PCDATA ) >
+<!ELEMENT combatMaps ( #PCDATA ) >
+<!ELEMENT encounters ( #PCDATA ) >
+
+<!ELEMENT properties EMPTY >
+<!ATTLIST properties shouldBeSaved (true|false) #IMPLIED >
+<!ATTLIST properties startsRevealed (true|false) #IMPLIED >
+<!ATTLIST properties modifyVolume (true|false) #IMPLIED >
+<!ATTLIST properties stopSoundsOnExit (true|false) #IMPLIED >
+<!ATTLIST properties ownerFaction NMTOKEN #IMPLIED>
+<!ATTLIST properties sunlightMultiplier NMTOKEN #IMPLIED>
+<!ATTLIST properties dangerousness NMTOKEN #IMPLIED>
+<!ATTLIST properties mapGroup CDATA #IMPLIED>
+
+<!ELEMENT ambient ( track+ ) >
+<!ATTLIST ambient chanceToPlay NMTOKEN #IMPLIED >
+<!ATTLIST ambient volumeModifier NMTOKEN #IMPLIED >
+
+<!ELEMENT combat ( track+ ) >
+<!ATTLIST combat chanceToPlay NMTOKEN #IMPLIED >
+<!ATTLIST combat volumeModifier NMTOKEN #IMPLIED >
+
+<!ELEMENT camp ( track+ ) >
+<!ATTLIST camp volumeModifier NMTOKEN #IMPLIED >
+
+<!ELEMENT music ( ambient?, combat?, onEntry?, onExit?, camp? ) >
+
+<!ELEMENT action ANY >
+
+<!ELEMENT condition ANY >
+
+<!ELEMENT onEntry ( condition|action|track )* >
+<!ATTLIST onEntry chanceToPlay NMTOKEN #IMPLIED >
+<!ATTLIST onEntry volumeModifier NMTOKEN #IMPLIED >
+
+<!ELEMENT onExit ( condition|action|track )* >
+<!ATTLIST onExit chanceToPlay NMTOKEN #IMPLIED >
+<!ATTLIST onExit volumeModifier NMTOKEN #IMPLIED >
+
+<!ELEMENT sound ( ambient?, onEntry?, onExit? ) >
+
+<!ENTITY % audiotrack SYSTEM "audiotrack.dtd">
+%audiotrack;
+
+<!ELEMENT triggers (onEntry?, onExit?) >

@@ -1,0 +1,31 @@
+<!ELEMENT weatherProfile ( temperature, precipitation, weatherEffects ) >
+
+<!ELEMENT temperature ( min, max ) >
+	<!ELEMENT min ( #PCDATA ) >
+	<!ELEMENT max ( #PCDATA ) >
+	
+<!ELEMENT precipitation ( chanceForSmall, chanceForMedium, chanceForHigh, durationMin, durationMax ) >
+	<!ELEMENT chanceForSmall ( #PCDATA ) >
+	<!ELEMENT chanceForMedium ( #PCDATA ) >
+	<!ELEMENT chanceForHigh ( #PCDATA ) >
+	<!ELEMENT durationMin ( #PCDATA ) >
+	<!ELEMENT durationMax ( #PCDATA ) >
+<!ELEMENT weatherEffects ( rain, snow ) >
+
+<!ELEMENT rain ( small, medium, high ) >
+<!ELEMENT snow ( small, medium, high ) >
+
+<!ELEMENT small ( particleEffect, sounds? ) >
+<!ELEMENT medium ( particleEffect, sounds? ) >
+<!ELEMENT high ( particleEffect, sounds? ) >
+
+<!ELEMENT particleEffect ( #PCDATA ) >
+<!ELEMENT sounds ( continuous?, random? ) >
+
+<!ELEMENT continuous ( track+ ) >		
+
+<!ELEMENT random ( track+ ) >
+<!ATTLIST random chanceToPlay NMTOKEN #IMPLIED >
+
+<!ELEMENT track EMPTY >
+<!ATTLIST track filename CDATA #REQUIRED >

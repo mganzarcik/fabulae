@@ -1,0 +1,45 @@
+<!ELEMENT activatedPerk ( name, description, iconFile, rank, level, sp?, ap?, hp?, mp?, combatOnly, automaticOnHitAnimation?, isAttack?, animationState?, learnRequirements?, activationRequirements?, modifiers?, target?, projectile?, effects? ) >
+
+<!ELEMENT passivePerk ( name, description, iconFile, characterSound?, rank, level, learnRequirements?, modifiers? ) >
+
+<!ELEMENT name  ( #PCDATA ) >
+
+<!ELEMENT description  ( #PCDATA ) >
+
+<!ELEMENT iconFile  ( #PCDATA ) >
+
+<!ELEMENT characterSound  ( #PCDATA ) >  
+
+<!ELEMENT rank  (#PCDATA)>
+
+<!ELEMENT level  ( #PCDATA ) >
+
+<!ELEMENT sp  ( #PCDATA ) >
+
+<!ELEMENT ap  ( #PCDATA ) >
+
+<!ELEMENT hp  ( #PCDATA ) >
+
+<!ELEMENT mp  ( #PCDATA ) >
+
+<!ELEMENT combatOnly  ( #PCDATA ) >
+
+<!ELEMENT  automaticOnHitAnimation ( #PCDATA ) >
+
+<!ELEMENT animationState  ( #PCDATA ) >
+
+<!ELEMENT isAttack  ( #PCDATA ) >
+
+<!ELEMENT learnRequirements  ANY >
+
+<!ELEMENT activationRequirements  ANY >
+
+<!ELEMENT projectile  ( #PCDATA ) >
+
+<!ELEMENT effects  ANY >
+
+<!ENTITY % modifiers SYSTEM "modifiers.dtd">
+%modifiers;
+
+<!ENTITY % target SYSTEM "targettype.dtd">
+%target;

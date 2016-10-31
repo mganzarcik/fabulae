@@ -1,0 +1,83 @@
+<!ENTITY % ai SYSTEM "ai.dtd">
+%ai;
+
+<!ENTITY % inventory SYSTEM "inventory.dtd">
+%inventory;
+
+<!ENTITY % actions SYSTEM "actions.dtd">
+%actions;
+
+<!ELEMENT import EMPTY >
+<!ATTLIST import filename CDATA #IMPLIED >
+
+<!ELEMENT forbiddenActions ( forbiddenBy+  ) >
+<!ELEMENT forbiddenBy ANY >
+<!ATTLIST forbiddenBy id CDATA #REQUIRED >
+
+<!ENTITY % skills SYSTEM "skills.dtd">
+%skills;
+
+<!ELEMENT perks (perk+) >
+
+<!ELEMENT perk EMPTY >
+<!ATTLIST perk id NMTOKEN #REQUIRED  >
+
+<!ELEMENT spells (spell+) >
+
+<!ELEMENT spell EMPTY >
+<!ATTLIST spell id NMTOKEN #REQUIRED  >
+
+<!ELEMENT stats (race, gender, level, experience?,  
+hpMax, mpMax, spMax, hpAct, mpAct, spAct, apAct?, perkPoints?, skillPoints?, experienceValue?, invincible?) >
+
+<!ELEMENT race ( #PCDATA ) >
+<!ELEMENT gender ( #PCDATA ) >
+<!ELEMENT level ( #PCDATA ) >
+<!ELEMENT experience ( #PCDATA ) >
+<!ELEMENT hpMax ( #PCDATA ) >
+<!ELEMENT mpMax ( #PCDATA ) >
+<!ELEMENT spMax ( #PCDATA ) >
+<!ELEMENT hpAct ( #PCDATA ) >
+<!ELEMENT mpAct ( #PCDATA ) >
+<!ELEMENT spAct ( #PCDATA ) >
+<!ELEMENT apAct ( #PCDATA ) >
+<!ELEMENT perkPoints ( #PCDATA ) >
+<!ELEMENT skillPoints ( #PCDATA ) >
+<!ELEMENT experienceValue ( #PCDATA ) >
+<!ELEMENT invincible ( #PCDATA ) >
+
+<!ELEMENT properties ( name?, description? )  >
+<!ATTLIST properties portraitFile CDATA #IMPLIED >
+<!ATTLIST properties audioProfile CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties model CDATA #IMPLIED > <!-- required -->
+<!ATTLIST properties name CDATA #IMPLIED >
+<!ATTLIST properties combatStartedChatterId CDATA #IMPLIED >
+<!ATTLIST properties crimeSpottedChatterId CDATA #IMPLIED >
+<!ATTLIST properties fineDialogueId CDATA #IMPLIED >
+<!ATTLIST properties description CDATA #IMPLIED >
+<!ATTLIST properties speed NMTOKEN #IMPLIED >
+<!ATTLIST properties state NMTOKEN #IMPLIED >
+<!ATTLIST properties x NMTOKEN #IMPLIED >
+<!ATTLIST properties y NMTOKEN #IMPLIED >
+<!ATTLIST properties orientation NMTOKEN #IMPLIED >
+<!ATTLIST properties stateTime NMTOKEN #IMPLIED >
+<!ATTLIST properties global (true | false) #IMPLIED >
+<!ATTLIST properties faction NMTOKEN #IMPLIED >
+<!ATTLIST properties shouldSearchAfterCombat (true | false) #IMPLIED >
+<!ATTLIST properties shouldReturnAfterCombat (true | false) #IMPLIED >
+<!ATTLIST properties lawEnfoncer (true | false) #IMPLIED >
+<!ATTLIST properties noCircle (true | false) #IMPLIED >
+<!ATTLIST properties sightDisabled (true | false) #IMPLIED >
+
+<!ELEMENT name ( #PCDATA ) >
+<!ELEMENT description ( #PCDATA ) >
+
+<!ELEMENT variable EMPTY >
+<!ATTLIST variable name NMTOKEN #REQUIRED >
+<!ATTLIST variable value NMTOKEN #REQUIRED >
+
+<!ELEMENT variables ( variable ) >
+
+<!ELEMENT visited  ( #PCDATA ) >
+
+<!ELEMENT onDeath  ANY >

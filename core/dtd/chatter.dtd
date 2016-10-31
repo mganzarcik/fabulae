@@ -1,0 +1,19 @@
+<!ELEMENT chatter ( import*, combatStarted?, crimeSpotted?, general? ) > 
+
+<!ELEMENT import EMPTY >
+<!ATTLIST import filename CDATA #IMPLIED >
+
+<!ELEMENT combatStarted ( text* )  >
+<!ATTLIST combatStarted location CDATA #IMPLIED >
+<!ATTLIST combatStarted chanceToSay NMTOKEN #REQUIRED >
+
+<!ELEMENT crimeSpotted ( text* )  >
+<!ATTLIST crimeSpotted location CDATA #IMPLIED >
+
+<!ELEMENT general ( text* )  >
+<!ATTLIST general location CDATA #IMPLIED >
+<!ATTLIST general chanceToSay NMTOKEN #REQUIRED >
+<!ATTLIST general checkFrequency NMTOKEN #IMPLIED >
+
+<!ELEMENT text ( #PCDATA ) >
+

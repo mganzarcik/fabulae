@@ -1,0 +1,35 @@
+<!ELEMENT effect ( parameters?, description?, type?, visible?, indicator?, onHit?, duration?, condition?, persistent?, onEnd? ) >
+
+<!ELEMENT indicator ( effectId, delay?, xOffset?, yOffset? ) >
+<!ELEMENT effectId  ( #PCDATA ) >
+<!ELEMENT delay  ( #PCDATA ) >
+<!ELEMENT xOffset  ( #PCDATA ) >
+<!ELEMENT yOffset  ( #PCDATA ) >
+
+<!ELEMENT visible  ( #PCDATA ) >
+
+<!ELEMENT parameters ANY >
+
+<!ELEMENT type  ( #PCDATA ) >
+
+<!ELEMENT description  ( text, extraParameters? ) >
+
+<!ELEMENT text  ( #PCDATA ) > 
+
+<!ELEMENT extraParameters  ( #PCDATA ) > 
+<!ATTLIST extraParameters id CDATA #IMPLIED >
+
+<!ELEMENT onHit  ( #PCDATA ) > 
+<!ATTLIST onHit id CDATA #IMPLIED >
+
+<!ELEMENT duration  ( #PCDATA ) >
+<!ATTLIST duration id CDATA #IMPLIED >
+
+<!ELEMENT condition  ( #PCDATA ) >
+<!ATTLIST condition id CDATA #IMPLIED >
+
+<!ELEMENT persistent  ( #PCDATA ) >
+<!ATTLIST persistent id CDATA #IMPLIED >
+
+<!ELEMENT onEnd  ( #PCDATA ) >
+<!ATTLIST onEnd id CDATA #IMPLIED >

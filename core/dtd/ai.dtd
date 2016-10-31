@@ -1,0 +1,4 @@
+<!ELEMENT ai ( scriptId, parameters? ) >
+
+<!ELEMENT scriptId ( #PCDATA ) >
+<!ELEMENT parameters ANY > 

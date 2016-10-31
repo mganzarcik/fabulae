@@ -1,0 +1,20 @@
+<!ELEMENT trap ( name, level, projectile, target, effects, sounds?) >
+
+
+<!ELEMENT name  ( #PCDATA ) >
+
+<!ELEMENT level  ( #PCDATA ) >
+
+<!ELEMENT projectile  ( #PCDATA ) >
+
+<!ELEMENT sounds ( disarmed?, sprung? ) >
+<!ELEMENT disarmed ( track )* >
+<!ELEMENT sprung ( track )* >
+
+<!ENTITY % audiotrack SYSTEM "audiotrack.dtd">
+%audiotrack;
+
+<!ELEMENT effects  ANY >
+
+<!ENTITY % target SYSTEM "targettype.dtd">
+%target;

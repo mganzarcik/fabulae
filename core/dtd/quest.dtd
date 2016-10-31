@@ -1,0 +1,17 @@
+<!ELEMENT quest ( startState, endState?, state* ) >
+<!ATTLIST quest name CDATA #REQUIRED >
+
+<!ELEMENT state ( name?, description?, action?, transition* ) >
+<!ATTLIST state id CDATA #REQUIRED >
+<!ATTLIST state startState (true | false) #IMPLIED >
+<!ATTLIST state endState (true | false) #IMPLIED >
+
+<!ELEMENT name ( #PCDATA ) >
+<!ELEMENT description ( #PCDATA ) >
+<!ELEMENT action ANY >
+<!ELEMENT condition ANY >
+
+<!ELEMENT transition  ( condition? ) >
+<!ATTLIST transition event CDATA #REQUIRED >
+<!ATTLIST transition toState CDATA #REQUIRED >
+<!ATTLIST transition silent (true | false) #IMPLIED >

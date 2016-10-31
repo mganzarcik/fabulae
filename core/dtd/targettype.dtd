@@ -1,0 +1,19 @@
+<!ELEMENT target  ( self | area | cone | single | line | singleInjured | severalAdjacent | allAdjacent | behind ) >
+
+<!ELEMENT self  EMPTY >
+
+<!ELEMENT area  ( #PCDATA ) >
+
+<!ELEMENT cone  ( #PCDATA ) >
+
+<!ELEMENT line  ( #PCDATA ) >
+
+<!ELEMENT single EMPTY >
+
+<!ELEMENT behind EMPTY >
+
+<!ELEMENT singleInjured EMPTY >
+
+<!ELEMENT severalAdjacent ( #PCDATA ) >
+
+<!ELEMENT allAdjacent EMPTY >

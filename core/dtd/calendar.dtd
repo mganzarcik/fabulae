@@ -1,0 +1,32 @@
+<!ENTITY % actions SYSTEM "actions.dtd">
+%actions;
+
+<!ELEMENT calendar ( properties, days, startDate, months  ) >
+
+<!ELEMENT properties EMPTY > 
+	<!ATTLIST properties hoursInDay NMTOKEN #REQUIRED >
+	<!ATTLIST properties daysInWeek NMTOKEN #REQUIRED >
+	<!ATTLIST properties weeksInMoth NMTOKEN #REQUIRED >
+	<!ATTLIST properties monthsInYear NMTOKEN #REQUIRED >
+	<!ATTLIST properties dawnDuskDuration NMTOKEN #REQUIRED >
+	
+<!ELEMENT days ( #PCDATA ) >
+
+<!ELEMENT startDate ( day, month, year, hour, minute, second ) >
+	<!ELEMENT day ( #PCDATA ) >
+	<!ELEMENT month ( #PCDATA ) >
+	<!ELEMENT year ( #PCDATA ) >
+	<!ELEMENT hour ( #PCDATA ) >
+	<!ELEMENT minute ( #PCDATA ) >
+	<!ELEMENT second ( #PCDATA ) >
+
+<!ELEMENT months ( monthDetails+ ) >
+
+<!ELEMENT monthDetails ( name, weather, sunIntensity, dawnTime, duskTime ) >
+	<!ATTLIST monthDetails id CDATA #REQUIRED >
+	<!ELEMENT name ( #PCDATA ) >
+	<!ELEMENT weather ( #PCDATA ) >
+	<!ELEMENT sunIntensity ( #PCDATA ) >
+	<!ELEMENT dawnTime ( hour, minute? ) >
+	<!ELEMENT duskTime ( hour, minute? ) >
+	

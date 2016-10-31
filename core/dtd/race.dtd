@@ -1,0 +1,13 @@
+<!ELEMENT race ( name?, description?, maxHPGain, maxMPGain, maxSPGain, HPRecovery, MPRecovery, SPRecovery, 
+				 maxEncumbrance, maxAP, experienceGainMultiplier, isPlayable?,
+				 hungerPeriod?, hungerRecovery?, amountEaten?, thirstPeriod?, thirstRecovery?, 
+				 amountDrank?, sleepPeriod?, moreTiredAfter?, maxRations?, maxWater?, 
+				 walkSpeed, sneakingSpeed, detectTrapsSpeed, skills?, inventory? ) >
+
+<!ENTITY % inventory SYSTEM "inventory.dtd">
+%inventory;
+
+<!ENTITY % skills SYSTEM "skills.dtd">
+%skills;
+
+<!ELEMENT properties EMPTY >
