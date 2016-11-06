@@ -680,7 +680,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	}
 	
 	/**
-	 * Checks whether we are dead or not  and performs the neccessary actions if not.
+	 * Checks whether we are dead or not  and performs the necessary actions if not.
 	 * 
 	 * @return
 	 */

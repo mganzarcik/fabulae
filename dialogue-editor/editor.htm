@@ -137,6 +137,7 @@
             document.getElementById('node-condition').value = "";
             document.getElementById('node-action').value = "";
             document.getElementById('node-dialogueEnd').checked = data.dialogueEnd;
+            document.getElementById('node-skills').checked = "";
             document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
             document.getElementById('cancelButton').onclick = clearPopUp.bind();
             document.getElementById('network-popUp').style.display = 'block';
@@ -150,6 +151,7 @@
             document.getElementById('node-label').value = data.f_text || "";
             document.getElementById('node-condition').value = data.f_condition || "";
             document.getElementById('node-action').value = data.f_action || "";
+            document.getElementById('node-skills').value = data.f_skills || "";
             document.getElementById('node-dialogueEnd').checked = data.f_dialogueEnd;
             document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
             document.getElementById('cancelButton').onclick = cancelEdit.bind(this,callback);
@@ -218,6 +220,7 @@
       data.f_condition = document.getElementById('node-condition').value;
       data.f_action = document.getElementById('node-action').value;
       data.f_dialogueEnd = document.getElementById('node-dialogueEnd').checked;
+      data.f_skills = document.getElementById('node-skills').value;
 
       if (!document.getElementById('node-id').value || typeChanged) {
         data.f_id = findNextId(data.f_type);
@@ -227,7 +230,7 @@
       data.title = Utils.wordwrap(data.f_text, 40, "<br>");
 
       var isGreeting = data.f_type === "greeting";
-      var isNPC = data.f_type === "npcTalk";
+      var isNPC = data.f_type === "npcTalk" || data.f_type === "pcSelector";
 
       data.shape = 'box';
       data.color = isGreeting ? Utils.greetingColor : (isNPC ? Utils.npcColor : (data.f_dialogueEnd ? Utils.endColor : Utils.pcColor));
@@ -266,6 +269,7 @@
               <select id="node-type" style="width: 100%;">
                 <option value="pcTalk" selected="selected">PC</option>
                 <option value="npcTalk" selected="selected">NPC</option>
+                <option value="pcSelector" selected="selected">PC selector</option>
                 <option value="greeting" selected="selected">Greeting</option>
               </select>
           </td>
@@ -281,6 +285,10 @@
         <tr>
           <td>Action</td>
           <td><textarea id="node-action" cols="40" rows="3"></textarea></td>
+        </tr>
+        <tr>
+          <td>Skills</td>
+          <td><input type="text" id="node-skills"></td>
         </tr>
         <tr>
           <td>Dialogue end</td>

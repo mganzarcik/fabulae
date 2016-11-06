@@ -645,7 +645,7 @@ public class UsableGameObject extends AnimatedGameObject implements Lockable, Tr
 	
 	@Override
 	public boolean shouldDrawShape() {
-		if (hasSprite() || !isUsable()) {
+		if (hasSprite() || !isUsable() || !isActive()) {
 			return false;
 		}
 		

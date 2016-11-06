@@ -169,6 +169,13 @@ public class Dialogue implements XMLLoadable {
 			npcTalks.put(newNPCTalk.getId(), newNPCTalk);
 		}
 		
+		// load PCSelectors
+		children = root.getChildrenByName(DialogueItem.XML_ELEMENT_PCSELECTOR);
+		for (Element npcTalk : children) {
+			PCSelector newNPCTalk = new PCSelector(this).loadFromXML(npcTalk);
+			npcTalks.put(newNPCTalk.getId(), newNPCTalk);
+		}
+		
 		// load PCTalks
 		children = root.getChildrenByName(DialogueItem.XML_ELEMENT_PCTTALK);
 		for (Element pcTalk : children) {

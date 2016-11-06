@@ -4,13 +4,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import mg.fishchicken.core.GameObject;
-import mg.fishchicken.core.GameState;
-
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.StringBuilder;
+
+import mg.fishchicken.core.GameObject;
+import mg.fishchicken.core.GameState;
 
 public class StringUtil {
 
@@ -26,6 +27,15 @@ public class StringUtil {
 
 	private StringUtil() {
 		
+	}
+	
+	public static final Array<String> arrayFromDelimitedString(String string, String delimiter) {
+		String[] splits = string.split(delimiter);
+		Array<String> returnValue = new Array<String>();
+		for (String split : splits) {
+			returnValue.add(split.trim());
+		}
+		return returnValue;
 	}
 	
 	public static String replaceParameters(String string, ObjectMap<String, String> parameters) {
@@ -84,6 +94,7 @@ public class StringUtil {
 	
 	private static String replaceWithCapitalisation(String textToProcess, String toReplace, String replacement) {
 		textToProcess = textToProcess.replaceAll("\\.[ ]*"+toReplace, ". "+capitalizeFirstLetter(replacement));
+		textToProcess = textToProcess.replaceAll("\\n[ ]*"+toReplace, "\n"+capitalizeFirstLetter(replacement));
 		textToProcess = textToProcess.replaceAll(toReplace, replacement);
 		return textToProcess;
 	}

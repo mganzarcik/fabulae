@@ -801,26 +801,13 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 	 * @see GameCharacter#rollSkillCheck(String)
 	 */
 	public boolean rollSkillCheck(String skill) {
-		return rollSkillCheck(Skill.valueOf(skill.toUpperCase(Locale.ENGLISH)), null);
-	}
-	
-	/**
-	 * Rolls a check for the given skill pretending it is not ran against
-	 * anything and stores the result in the last skill checks map and also
-	 * returns it.
-	 * 
-	 * This result can later be queried using passedSkillCheck(Skill).
-	 * 
-	 * @param skill
-	 */
-	public boolean rollSkillCheck(Skill skill) {
-		return rollSkillCheck(skill, null);
+		return rollSkillCheck(Skill.valueOf(skill.toUpperCase(Locale.ENGLISH)));
 	}
 	
 	/**
 	 * @see GameCharacter#rollSkillCheck(Skill, SkillCheckModifier)
 	 */
-	public boolean rollSkillCheck(String skill, SkillCheckModifier modifier) {
+	public boolean rollSkillCheck(String skill, SkillCheckModifier... modifier) {
 		return rollSkillCheck(Skill.valueOf(skill.toUpperCase(Locale.ENGLISH)), modifier);
 	}
 	
@@ -837,7 +824,7 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 	 * @param skill
 	 * @param modifier
 	 */
-	public boolean rollSkillCheck(Skill skill, SkillCheckModifier skillCheckModifier) {
+	public boolean rollSkillCheck(Skill skill, SkillCheckModifier... skillCheckModifier) {
 		boolean returnValue = false;
 		int chance = 0;
 		if (Skill.CLIMBING.equals(skill) || 
@@ -850,7 +837,11 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 		} 
 		
 		if (skillCheckModifier != null) {
-			chance += skillCheckModifier.getSkillCheckModifier(skill, character);
+			for (SkillCheckModifier modifier : skillCheckModifier) {
+				if (modifier != null) {
+					chance += modifier.getSkillCheckModifier(skill, character);
+				}
+			}
 		}
 		
 		if (chance > 99) {

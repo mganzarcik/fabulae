@@ -15,6 +15,12 @@ public class And extends Action {
 
 	protected Array<Action> actions = new Array<Action>();
 	
+	public And() {
+	}
+	
+	public And(Action... actions) {
+		this.actions.addAll(actions);
+	}
 	
 	protected boolean evaluate(Object object, Binding parameters) {
 		for (Action action : actions) {

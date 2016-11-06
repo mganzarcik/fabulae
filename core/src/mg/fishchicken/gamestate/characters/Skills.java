@@ -167,7 +167,7 @@ public class Skills extends ObservableState<Skills, Skills.SkillChange>  {
 		writer.element(getXMLElementName());
 		for (Skill skill : Skill.values()) {
 			int rank = getBaseSkillRank(skill);
-			writer.element(XML_SKILL).attribute(XMLUtil.XML_ATTRIBUTE_NAME, skill.toString()).attribute(XMLUtil.XML_ATTRIBUTE_VALUE, rank).pop();
+			writer.element(XML_SKILL).attribute(XMLUtil.XML_ATTRIBUTE_ID, skill.toString()).attribute(XMLUtil.XML_ATTRIBUTE_VALUE, rank).pop();
 		}
 		writer.pop();
 	}

@@ -3,6 +3,7 @@ package mg.fishchicken.core.actions;
 import groovy.lang.Binding;
 import mg.fishchicken.core.logging.Log;
 import mg.fishchicken.core.logging.Log.LogType;
+import mg.fishchicken.core.util.CoreUtil;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
 import mg.fishchicken.gamelogic.inventory.items.InventoryItem;
 
@@ -14,6 +15,10 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * 
  * If the supplied object is the NPC, it will be transfered to the PC, and vice versa.
  * <br /><br />
+ * 
+ * If there is no source character, of the character does not possess the item
+ * a new item instance will be created on the fly. It will be assumed
+ * the item's assets are already loaded.
  * Example:
  * 
  * <pre>
@@ -32,7 +37,7 @@ public class GiveItem extends Action {
 		GameCharacter npc = (GameCharacter) parameters.getVariable(PARAM_NPC_AT_DIALOGUE);
 		GameCharacter pc = (GameCharacter) parameters.getVariable(PARAM_PC_AT_DIALOGUE);
 		
-		if (object.equals(pc)) {
+		if (CoreUtil.equals(object, pc)) {
 			targetCharacter = npc;
 			sourceCharacter = pc;
 		} else {
@@ -40,11 +45,14 @@ public class GiveItem extends Action {
 			sourceCharacter = npc;
 		}
 		
-		InventoryItem item = sourceCharacter.getInventory().getItem(getParameter(XML_ITEM));
-		if (item != null) {
-			targetCharacter.getInventory().addItem(item);
-			Log.logLocalized("itemReceived", LogType.INVENTORY, item.getName(), targetCharacter.getName());
+		String itemId = getParameter(XML_ITEM);
+		InventoryItem item = sourceCharacter != null ? sourceCharacter.getInventory().getItem(itemId) : null;
+		if (item == null) {
+			item = InventoryItem.getItem(itemId);
 		}
+		
+		targetCharacter.getInventory().addItem(item);
+		Log.logLocalized("itemReceived", LogType.INVENTORY, item.getName(), targetCharacter.getName());
 	}
 
 	@Override

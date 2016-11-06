@@ -31,6 +31,7 @@ public abstract class DialogueItem implements ThingWithId {
 	public static final String XML_ELEMENT_BANTER = "banter";
 	public static final String XML_ELEMENT_PCTTALK = "pcTalk";
 	public static final String XML_ELEMENT_NPCTTALK = "npcTalk";
+	public static final String XML_ELEMENT_PCSELECTOR = "pcSelector";
 	public static final String XML_ELEMENT_TEXT = "text";
 	public static final String XML_ATTRIBUTE_ID = "id";
 	public static final String XML_ATTRIBUTE_CONVERSATION_END = "endOfConversation";
@@ -41,9 +42,9 @@ public abstract class DialogueItem implements ThingWithId {
 	private Dialogue dialogue;
 	@XMLField(fieldPath="id")
 	private String id;
-	private Action action;
-	protected Condition condition;
 	private String text;
+	protected Action action;
+	protected Condition condition;
 	
 	public DialogueItem(Dialogue dialogue) {
 		this.dialogue = dialogue;

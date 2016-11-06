@@ -9,30 +9,32 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 
 /**
  * 
- * Rolls a skill check of the supplied character against 
- * the NPC character currently engaged in dialogue.
+ * Rolls a skill check for the supplied character. If there is a NPC at dialogue,
+ * he will be used as a skill check modifier, together with any map the supplied character
+ * is currently at.
  * <br /><br />
  * Example:
  * <pre>
- *  &lt;rollSkillCheckAgainstNPC skill="Persuasion" targetObject="__pcAtDialogue" /&gt;
+ *  &lt;rollSkillCheck skill="Persuasion" targetObject="__pcAtDialogue" /&gt;
  * </pre>
  * 
  */
-public class RollSkillCheckAgainstNPC extends Action {
+public class RollSkillCheck extends Action {
 
 	public static final String XML_SKILL_NAME = "skill";
 	
 	@Override
 	protected void run(Object object, Binding parameters) {
 		if (object instanceof GameCharacter) {
-			((GameCharacter) object).stats().rollSkillCheck(getParameter(XML_SKILL_NAME), (SkillCheckModifier) parameters.getVariable(PARAM_NPC_AT_DIALOGUE));
+			GameCharacter character = (GameCharacter) object;
+			character.stats().rollSkillCheck(getParameter(XML_SKILL_NAME), character.getMap(), (SkillCheckModifier) parameters.getVariable(PARAM_NPC_AT_DIALOGUE));
 		}
 	}
 
 	@Override
 	public void validateAndLoadFromXML(Element conditionElement) {
 		if (conditionElement.get(XML_SKILL_NAME, null) == null) {
-			throw new GdxRuntimeException(XML_SKILL_NAME+" must be set for action RollSkillCheck in element: \n\n"+conditionElement);
+			throw new GdxRuntimeException(XML_SKILL_NAME+" must be set for action rollSkillCheck in element: \n\n"+conditionElement);
 		}
 	}
 

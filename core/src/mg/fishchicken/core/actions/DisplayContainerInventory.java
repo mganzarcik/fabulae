@@ -12,11 +12,14 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * Displays the inventory of the supplied InventoryContainer and of the leader of 
  * the player character group so that items can be moved back and forth.
  * 
+ * If the optional id is supplied, the inventory of a InventoryContainer with this name
+ * will be displayed.
+ * 
  * <br /><br />
  * Example:
  * 
  * <pre>
- * 	&lt;displayContainerInventory /&gt;
+ * 	&lt;displayContainerInventory id="containerId" /&gt;
  * </pre>
  * 
  * @author ANNUN
@@ -24,13 +27,22 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  */
 public class DisplayContainerInventory extends Action {
 	
+	public static final String XML_CONTAINER_ID = "id";
+	
 	@Override
 	protected void run(Object object, Binding parameters) {
-		if (object instanceof InventoryContainer) {
-			GameCharacter pc = GameState.getPlayerCharacterGroup().getGroupLeader(true);
-			if (pc != null) {
-				UIManager.displayContainerInventory(pc, (InventoryContainer)object);
-			}
+		InventoryContainer ic = null;
+		String id = getParameter(XML_CONTAINER_ID);
+		
+		if (id != null) {
+			ic = (InventoryContainer) GameState.getGameObjectById(id, InventoryContainer.class);
+		} else if (object instanceof InventoryContainer) {
+			ic = (InventoryContainer)object;
+		} 
+		
+		GameCharacter pc = GameState.getPlayerCharacterGroup().getGroupLeader(true);
+		if (ic != null && pc != null) {
+			UIManager.displayContainerInventory(pc, ic);
 		}
 	}
 

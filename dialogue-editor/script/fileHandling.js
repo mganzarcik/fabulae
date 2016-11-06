@@ -28,12 +28,13 @@ function getXmlExport(dialogueId, data) {
       condition: node.f_condition,
       action: node.f_action,
       endOfConversation: node.f_dialogueEnd,
+      skills: node.f_skills,
       connections: []
     };
 
     data.edges.forEach(function(edge) {
       if (edge.from === node.id) {
-        nodeData.connections.push(data.nodes.get(edge.to).f_id);
+        nodeData.connections.push(data.nodes.get(edge.to));
       }
     });
     nodes.push(nodeData);
@@ -44,7 +45,7 @@ function getXmlExport(dialogueId, data) {
                "<dialogue>\n";
   for (var i in nodes) {
     var node = nodes[i];
-    output += "    <"+node.type+" id=\""+node.id+"\""+(node.endOfConversation ? " endOfConversation=\"true\"" : "")+">\n";
+    output += "    <"+node.type+" id=\""+node.id+"\""+(node.endOfConversation ? " endOfConversation=\"true\"" : "")+(node.skills ? " skills=\""+node.skills+"\"" : "")+">\n";
     if (node.condition) {
       output += "        <condition>\n"
       output += "            "+node.condition+"\n";
@@ -58,10 +59,11 @@ function getXmlExport(dialogueId, data) {
     output += "        <text>\n"
     output += "            "+dialogueId+".json#"+node.id+"\n";
     output += "        </text>\n"
-    var connElement = node.type === "pcTalk" ? "npcTalk" : "pcTalk";
     for (var j in node.connections) {
-      output += "        <"+connElement+" id=\""+node.connections[j]+"\" />\n";
+      var to = node.connections[j];
+      output += "        <"+to.f_type+" id=\""+to.f_id+"\" />\n";
     }
+
     output += "    </"+node.type+">\n";
   }
 
@@ -159,6 +161,7 @@ function handleDialogueFileUpload(evt) {
           node.f_type = type;
           node.f_condition = item.condition;
           node.f_action = item.action;
+          node.f_skills = item.skills;
           node.f_dialogueEnd = item.endOfConversation === "true";
           var id = item.id.indexOf(type) === 0 ? item.id : type+item.id;
           node.f_id = id;
@@ -171,7 +174,7 @@ function handleDialogueFileUpload(evt) {
           setNodeText(node, text);
 
           var isGreeting = node.f_type === "greeting";
-          var isNPC = node.f_type === "npcTalk";
+          var isNPC = node.f_type === "npcTalk" || node.f_type === "pcSelector";
 
           node.shape = 'box';
           node.color = isGreeting ? Utils.greetingColor : (isNPC ? Utils.npcColor : (node.f_dialogueEnd ? Utils.endColor : Utils.pcColor));
@@ -194,6 +197,16 @@ function handleDialogueFileUpload(evt) {
             } else {
               for (var k in item.npcTalk) {
                 edges.push(createEdge(node.id, item.npcTalk[k].id, "npcTalk"));
+              }
+            }
+          }
+
+          if (item.pcSelector) {
+            if (item.pcSelector.id) {
+              edges.push(createEdge(node.id, item.pcSelector.id, "pcSelector"));
+            } else {
+              for (var k in item.pcSelector) {
+                edges.push(createEdge(node.id, item.pcSelector[k].id, "pcSelector"));
               }
             }
           }
