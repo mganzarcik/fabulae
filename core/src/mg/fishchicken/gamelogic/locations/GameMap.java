@@ -1853,6 +1853,8 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 					.gatherAssets(assetStore);
 		}
 		
+		GameState.getPlayerCharacterGroup().gatherAssets(assetStore);
+		
 		if (isIsometric) {
 			gridTextureFile = Configuration.getFileIsometricMapGridTexture();
 			transitionTextureFile = Configuration.getFileIsometricMapTransitionTexture();
@@ -1863,11 +1865,7 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 			solitTileTextureFile = Configuration.getFileOrthogonalMapSolidWhiteTileTexture();
 		}
 		myAssets.clear();
-		myAssets.putAll(assetStore);
-		
-		// do not store PC assets in myAssets, since they can change during gameplay
-		// so we gather them, but not store them
-		GameState.getPlayerCharacterGroup().gatherAssets(assetStore);
+		myAssets.putAll(assetStore);		
 	}
 	
 	public RayHandler getLightsRayHandler() {
@@ -2034,10 +2032,6 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 		mapTileObjects.clear();
 
 		if (mapLoaded) {
-			// PC assets are not stored in #gatherAssets() 
-			// since they can change during gameplay
-			// so just gather them now and unload them
-			GameState.getPlayerCharacterGroup().gatherAssets(myAssets);
 			for (Entry<String, Class<?>> entry: myAssets) {
 				if (!Configuration.isGlobalAsset(entry.key)) {
 					Assets.getAssetManager().unload(entry.key);

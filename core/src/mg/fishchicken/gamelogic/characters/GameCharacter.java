@@ -222,6 +222,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 			@Override
 			public void hasChanged(Stats stateObject, StatChange changes) {
 				endInvalidEffects();
+				checkDeath();
 			}
 		});
 		stats.skills().addObserver(new Observer<Skills, Skills.SkillChange>() {
@@ -275,8 +276,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 				damageIterator.remove();
 			}
 		}
-		
-		checkDeath();
 	
 		super.update(deltaTime); 
 		
@@ -697,6 +696,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	 * inactive and drops all items.
 	 */
 	public void die() {
+		setActive(false);
 		if (!State.DEATH.equals(getState())) {
 			setState(State.DEATH);
 		} 
@@ -717,7 +717,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		stats.setSPAct(0);
 		setGlobal(false);
 		disableAI();
-		setActive(false);
 		updateVisibleArea();
 		
 		inventory.dropEverythingToTheGround();

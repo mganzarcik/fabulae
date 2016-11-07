@@ -215,7 +215,7 @@ public class DialoguePanel extends BorderedWindow implements EventListener {
 		
 		NPCTalk nextNPTTalk = pcTalkSelected.executeNextValidNPCTalk();
 		
-		if (nextNPTTalk == null) {
+		if (nextNPTTalk == null || !dialogue.getPCAtDialogue().isActive()) {
 			UIManager.hideDialogue();
 			return;
 		}
