@@ -281,9 +281,7 @@ public class UIManager {
 		characterEditLoader = new CharacterCreationWindowLoader() {
 			@Override
 			public void onLoaded(AssetManager am, CharacterCreationWindow loadedWindow) {
-				if (displayedCharacter.isPlayerEditable()) {
-					unload(displayedCharacter, am);
-				}
+				storeCurrentAssets(displayedCharacter, am);
 				loadedWindow.setCharacter(displayedCharacter);
 			}
 		};
@@ -291,6 +289,7 @@ public class UIManager {
 			
 			@Override
 			public void onOk(GameCharacter character) {
+				characterEditLoader.loadChanged(displayedCharacter, am);
 				onCancel();
 				character.recalculateAllItemModels();
 				refreshPCPanel();
@@ -298,9 +297,6 @@ public class UIManager {
 			
 			@Override
 			public void onCancel() {
-				if (displayedCharacter.isPlayerEditable()) {
-					characterEditLoader.load(displayedCharacter, am);
-				}
 				characterEditLoader.unload(am);
 				removeActor(characterEditPanel);
 				gameState.unpauseGame();
@@ -986,7 +982,6 @@ public class UIManager {
 			savedGameLoader.unload(am);
 		}
 		if (removeActor(characterEditPanel)) {
-			characterEditLoader.load(displayedCharacter, am);
 			characterEditLoader.unload(am);
 		}
 		if (isLoadingPanel(characterEditPanel)) {

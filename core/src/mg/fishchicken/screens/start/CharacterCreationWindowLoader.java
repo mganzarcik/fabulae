@@ -5,6 +5,7 @@ import mg.fishchicken.core.assets.AssetMap;
 import mg.fishchicken.core.assets.Assets;
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
+import mg.fishchicken.gamelogic.locations.GameMap;
 import mg.fishchicken.graphics.models.CharacterModel;
 import mg.fishchicken.ui.loading.LoadingWindow.Loader;
 
@@ -19,6 +20,7 @@ public class CharacterCreationWindowLoader extends Loader<CharacterCreationWindo
 	private ObjectMap<String, String> portraits = new ObjectMap<String, String>();
 	private Array<CharacterModel> models = new Array<CharacterModel>();
 	private AssetMap audioProfiles = new AssetMap();
+	private AssetMap characterAssets = new AssetMap();
 	
 	/**
 	 * This will unload everything loaded by this loader.
@@ -58,20 +60,29 @@ public class CharacterCreationWindowLoader extends Loader<CharacterCreationWindo
 
 	/**
 	 * Loads all character creation screen - relevant assets of the supplied
-	 * character into the asset manager.
+	 * character that were changed since the loader was loaded into the asset manager.
 	 * 
 	 * @param character
 	 * @param am
 	 */
-	public void load(GameCharacter character, AssetManager am) {
-		am.load(character.getPortraitFile(), Texture.class);
-		if (character.getModel().isSelectable()) {
-			am.load(character.getModel().getAnimationTextureFile(), Texture.class);
-		}
-		
+	public void loadChanged(GameCharacter character, AssetManager am) {
+		GameMap map = character.getMap();
+		checkAndAddAsset(am, map, character.getPortraitFile(), Texture.class);
+		checkAndAddAsset(am, map, character.getModel().getAnimationTextureFile(), Texture.class);		
 		AssetMap store = new AssetMap();
 		character.getAudioProfile().gatherAssets(store);
-		loadFromStore(am, store);
+		for (Entry<String, Class<?>> entry : store) {
+			checkAndAddAsset(am, map, entry.key, entry.value);
+		}
+	}
+	
+	private void checkAndAddAsset(AssetManager am, GameMap map, String file, Class<?> assetClass) {
+		if (!characterAssets.containsFile(file)) {
+			am.load(file, assetClass);
+			if (map != null) {
+				map.addAsset(file, assetClass);
+			}
+		}
 	}
 	
 	/**
@@ -81,15 +92,11 @@ public class CharacterCreationWindowLoader extends Loader<CharacterCreationWindo
 	 * @param character
 	 * @param am
 	 */
-	public void unload(GameCharacter character, AssetManager am) {
-		am.unload(character.getPortraitFile());
-		if (character.getModel().isSelectable()) {
-			am.unload(character.getModel().getAnimationTextureFile());
-		}
-		
-		AssetMap store = new AssetMap();
-		character.getAudioProfile().gatherAssets(store);
-		unloadFromStore(am, store);
+	public void storeCurrentAssets(GameCharacter character, AssetManager am) {
+		characterAssets.clear();
+		characterAssets.put(character.getPortraitFile(), Texture.class);
+		characterAssets.put(character.getModel().getAnimationTextureFile(), Texture.class);
+		character.getAudioProfile().gatherAssets(characterAssets);
 	}
 	
 	private void loadFromStore(AssetManager am, AssetMap store) {

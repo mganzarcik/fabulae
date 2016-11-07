@@ -1868,6 +1868,22 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 		myAssets.putAll(assetStore);		
 	}
 	
+	/**
+	 * Adds the supplied asset to this map.
+	 * 
+	 * This means the map will attempt to unload the asset when the map is disposed.
+	 * 
+	 * This will not actually load the asset! It is the responsibility of the
+	 * caller to ensure the asset is properly loaded and does not get unloaded
+	 * before the map is unloaded.
+	 * 
+	 * @param filename
+	 * @param assetClass
+	 */
+	public void addAsset(String filename, Class<?> assetClass) {
+		myAssets.put(filename, assetClass);
+	}
+	
 	public RayHandler getLightsRayHandler() {
 		return lightsRayHandler;
 	}
