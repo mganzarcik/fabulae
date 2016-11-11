@@ -1,7 +1,10 @@
 <!ENTITY % actions SYSTEM "actions.dtd">
 %actions;
 
-<!ELEMENT light ( properties, actions? ) >
+<!ENTITY % import SYSTEM "import.dtd">
+%import;
+
+<!ELEMENT light ( import?, properties?, actions? ) >
 
 <!ELEMENT properties EMPTY >
 

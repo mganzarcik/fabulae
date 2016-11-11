@@ -4,6 +4,13 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.i18n.Strings;
@@ -13,20 +20,12 @@ import mg.fishchicken.core.saveload.XMLSaveable;
 import mg.fishchicken.gamelogic.characters.AbstractGameCharacter;
 import mg.fishchicken.gamelogic.characters.CharacterFilter;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
-import mg.fishchicken.gamelogic.dialogue.Chatter;
+import mg.fishchicken.gamelogic.dialogue.Chatter.ChatterType;
 import mg.fishchicken.gamelogic.dialogue.DialogueCallback;
 import mg.fishchicken.gamelogic.dialogue.PCTalk;
-import mg.fishchicken.gamelogic.dialogue.Chatter.ChatterType;
 import mg.fishchicken.gamelogic.factions.Faction;
 import mg.fishchicken.gamestate.crime.Crime;
 import mg.fishchicken.ui.UIManager;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 public class CrimeManager implements XMLSaveable {
 

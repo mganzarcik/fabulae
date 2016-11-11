@@ -4,13 +4,13 @@
 <!ENTITY % lock SYSTEM "lock.dtd">
 %lock;
 
-<!ELEMENT usable ( import?, properties?, lock?, trap?, stateMachine?, inventory? ) >
+<!ENTITY % import SYSTEM "import.dtd">
+%import;
+
+<!ELEMENT usable ( import*, properties?, lock?, trap?, stateMachine?, inventory? ) >
 
 <!ELEMENT trap EMPTY >
 <!ATTLIST trap trapId CDATA #IMPLIED >
-
-<!ELEMENT import EMPTY >
-<!ATTLIST import filename CDATA #IMPLIED >
 
 <!ELEMENT properties EMPTY >
 <!ATTLIST properties name CDATA #IMPLIED > <!-- required -->

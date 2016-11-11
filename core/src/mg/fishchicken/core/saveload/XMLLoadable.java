@@ -2,8 +2,6 @@ package mg.fishchicken.core.saveload;
 
 import java.io.IOException;
 
-import mg.fishchicken.core.ThingWithId;
-
 import com.badlogic.gdx.files.FileHandle;
 
 /**

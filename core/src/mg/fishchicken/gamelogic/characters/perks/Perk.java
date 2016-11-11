@@ -1,15 +1,22 @@
 package mg.fishchicken.gamelogic.characters.perks;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+
+import groovy.lang.Binding;
+import groovy.lang.Script;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
-import mg.fishchicken.core.ThingWithId;
 import mg.fishchicken.core.assets.AssetContainer;
 import mg.fishchicken.core.assets.AssetMap;
 import mg.fishchicken.core.assets.Assets;
@@ -36,15 +43,6 @@ import mg.fishchicken.gamelogic.effects.targets.TargetTypeContainer;
 import mg.fishchicken.gamelogic.modifiers.Modifier;
 import mg.fishchicken.gamelogic.modifiers.ModifierContainer;
 import mg.fishchicken.gamestate.characters.Stats;
-
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.badlogic.gdx.utils.OrderedMap;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
 
 /**
  * Perk is a special ability a character may have.

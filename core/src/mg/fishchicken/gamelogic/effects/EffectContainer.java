@@ -14,6 +14,13 @@ public interface EffectContainer extends ThingWithId {
 	 * @return
 	 */
 	public String getRawName();
+	
+	/**
+	 * Adds a new effect to this container.
+	 * 
+	 * @param effect
+	 * @param effectParameters
+	 */
 	public void addEffect(Effect effect, Array<EffectParameter> effectParameters);
 	
 	/**

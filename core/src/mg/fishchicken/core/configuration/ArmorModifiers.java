@@ -2,11 +2,10 @@ package mg.fishchicken.core.configuration;
 
 import java.util.Iterator;
 
-import mg.fishchicken.gamelogic.inventory.items.Armor.ArmorClass;
+import com.badlogic.gdx.utils.Array;
+
 import mg.fishchicken.gamelogic.modifiers.Modifier;
 import mg.fishchicken.gamelogic.modifiers.ModifierContainer;
-
-import com.badlogic.gdx.utils.Array;
 
 public class ArmorModifiers implements ModifierContainer {
 

@@ -1,0 +1,15 @@
+<!ELEMENT storySequence ( music?, screens, action? )>
+<!ATTLIST storySequence canContinue (true|false) #IMPLIED >
+
+
+<!ELEMENT screens ( screen* )>
+
+<!ELEMENT screen ( condition?, title?, text )>
+<!ATTLIST screen image CDATA #REQUIRED >
+
+<!ELEMENT title ( #PCDATA )>
+<!ELEMENT text ( #PCDATA )>
+
+<!ELEMENT condition ANY >
+
+<!ELEMENT action ANY >

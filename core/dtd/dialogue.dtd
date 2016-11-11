@@ -21,7 +21,7 @@
 <!ATTLIST pcTalk isYes (true|false) #IMPLIED >
 <!ATTLIST pcTalk id NMTOKEN #REQUIRED >
 
-<!ELEMENT pcSelector ( pcTalk | npcTalk | action | condition | text )* >
+<!ELEMENT pcSelector ( pcTalk | npcTalk | action | condition | image? | text )* >
 <!ATTLIST pcSelector id NMTOKEN #REQUIRED >
 <!ATTLIST pcSelector skills CDATA #IMPLIED >
 

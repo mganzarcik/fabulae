@@ -1,16 +1,12 @@
 package mg.fishchicken.core.conditions;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.XmlReader.Element;
+
 import groovy.lang.Binding;
-
-import java.io.IOException;
-
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.util.XMLUtil;
-import mg.fishchicken.gamelogic.characters.GameCharacter;
-
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader.Element;
 
 /**
  * Returns true if the supplied GameObject is currently active.

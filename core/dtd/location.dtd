@@ -2,8 +2,8 @@
 
 <!ELEMENT activityModifiers ( hunting?, swimming?, climbing?, waterSearching?, sneaking?)>
 
-<!ELEMENT import EMPTY >
-<!ATTLIST import filename CDATA #IMPLIED >
+<!ENTITY % import SYSTEM "import.dtd">
+%import;
 
 <!ELEMENT weatherModifiers ( #PCDATA ) >
 <!ELEMENT combatMaps ( #PCDATA ) >

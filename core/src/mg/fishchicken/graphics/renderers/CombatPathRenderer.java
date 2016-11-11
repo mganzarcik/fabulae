@@ -1,7 +1,13 @@
 package mg.fishchicken.graphics.renderers;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
+
 import mg.fishchicken.core.GameState;
-import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.input.PlayerCharacterController;
 import mg.fishchicken.core.util.MathUtil;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
@@ -9,13 +15,6 @@ import mg.fishchicken.gamelogic.combat.CombatPath;
 import mg.fishchicken.gamelogic.locations.GameMap;
 import mg.fishchicken.pathfinding.Path.Step;
 import mg.fishchicken.ui.UIManager;
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Align;
 
 public class CombatPathRenderer {
 	

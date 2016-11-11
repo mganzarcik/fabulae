@@ -3,6 +3,11 @@ package mg.fishchicken.gamelogic.actions;
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.logging.Log;
@@ -19,12 +24,8 @@ import mg.fishchicken.gamelogic.effects.targets.Single;
 import mg.fishchicken.gamelogic.effects.targets.TargetType;
 import mg.fishchicken.gamelogic.inventory.items.Weapon;
 import mg.fishchicken.gamelogic.modifiers.Modifier;
+import mg.fishchicken.gamestate.GameObjectPosition;
 import mg.fishchicken.gamestate.characters.Stats;
-
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 /**
  * Makes the supplied GameCharacter use the supplied Perk.
@@ -257,10 +258,13 @@ public class UsePerkAction extends AttackAction implements SkillCheckModifier  {
 		Log.logLocalized("usedPerk", Log.LogType.COMBAT, user.getName(), perk.getName());
 		
 		if (user.getMap() != null) {
-			user.setOrientation(Orientation
-					.calculateOrientationToTarget(user.getMap().isIsometric(),
-							user.position().getX(), user.position().getY(),
-							effectTarget.getTargetX(), effectTarget.getTargetY()));
+			GameObjectPosition userPosition = user.position();
+			if (!userPosition.tile().equals((int)effectTarget.getTargetX(), (int)effectTarget.getTargetY())) {
+				user.setOrientation(Orientation
+						.calculateOrientationToTarget(user.getMap().isIsometric(),
+								userPosition.getX(), userPosition.getY(),
+								effectTarget.getTargetX(), effectTarget.getTargetY()));
+			}
 		}
 		
 		if (perk.getAnimationState() != null) {

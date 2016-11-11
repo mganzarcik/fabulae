@@ -1,1 +1,4 @@
-<!ELEMENT model ( animationTextureFile, animationInfoFile, projectileOriginXOffset?, projectileOriginYOffset?, selectable? ) >
+<!ELEMENT model ( import?, animationTextureFile?, animationInfoFile?, projectileOriginXOffset?, projectileOriginYOffset?, selectable?, paperdoll?, itemModelPrefix? ) >
+
+<!ENTITY % import SYSTEM "import.dtd">
+%import;

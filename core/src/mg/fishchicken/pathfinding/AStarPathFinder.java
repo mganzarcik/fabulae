@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.StringBuilder;
+
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.PositionedThing;
@@ -23,10 +27,6 @@ import mg.fishchicken.gamelogic.traps.TrapLocation;
 import mg.fishchicken.gamestate.Tile;
 import mg.fishchicken.pathfinding.Path.Step;
 import mg.fishchicken.pathfinding.heuristics.ClosestHeuristic;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.StringBuilder;
 
 /**
  * A path finder implementation that uses the AStar heuristic based algorithm
@@ -60,7 +60,6 @@ public class AStarPathFinder implements PathFinder {
 	private int targetY;
 	private boolean destinationBlocked;
 	private Object target;
-	private Class<? extends Action> finalAction;
 
 	private PositionArray temPositionArray = new PositionArray();
 	private ObjectSet<GameObject> tempSet = new ObjectSet<GameObject>();
@@ -141,7 +140,6 @@ public class AStarPathFinder implements PathFinder {
 		}
 		
 		this.target = targetGO;
-		this.finalAction = finalAction;
 		
 		path.setFinalAction(finalAction);
 		path.setTarget(target);

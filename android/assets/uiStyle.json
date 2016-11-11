@@ -11,19 +11,19 @@ com.badlogic.gdx.graphics.Color: {
 
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	small: { 
-		file: fonts\\Roboto-Regular.ttf,
+		file: fonts/Roboto-Regular.ttf,
 		size: 15
  	},
 	normal: { 
-		file: fonts\\Roboto-Regular.ttf,
+		file: fonts/Roboto-Regular.ttf,
 		size: 17
  	},
 	subheading: { 
-		file: fonts\\Roboto-Bold.ttf,
+		file: fonts/Roboto-Bold.ttf,
 		size: 19
  	},
 	heading: { 
-		file: fonts\\Roboto-Bold.ttf,
+		file: fonts/Roboto-Bold.ttf,
 		size: 21
  	}
 },

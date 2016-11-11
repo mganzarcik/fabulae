@@ -1,5 +1,4 @@
-<!ELEMENT trap ( name, level, projectile, target, effects, sounds?) >
-
+<!ELEMENT trap ( import?, name, level, projectile, target, effects, sounds?) >
 
 <!ELEMENT name  ( #PCDATA ) >
 
@@ -18,3 +17,6 @@
 
 <!ENTITY % target SYSTEM "targettype.dtd">
 %target;
+
+<!ENTITY % import SYSTEM "import.dtd">
+%import;

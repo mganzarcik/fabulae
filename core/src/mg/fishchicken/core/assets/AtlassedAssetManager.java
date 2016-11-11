@@ -1,13 +1,9 @@
 package mg.fishchicken.core.assets;
 
-import mg.fishchicken.core.logging.Log;
-import mg.fishchicken.core.logging.Log.LogType;
-
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /**
  * A special manager that can work with texture atlasses 
