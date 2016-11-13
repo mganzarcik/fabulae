@@ -190,8 +190,10 @@ public class CharacterCreationWindow extends BorderedWindow {
 				
 			});
 			
+			roleField.setDisabled(!character.isPlayerEditable() || editOnly);
+			
 			if (selectedRole == null) {
-				if (character.isPlayerEditable()) {
+				if (!roleField.isDisabled()) {
 					selectedOption = options.get(0);
 				} else {
 					selectedOption = new SelectOption<Role>("", null);
@@ -206,7 +208,6 @@ public class CharacterCreationWindow extends BorderedWindow {
 				roleField.setSelected(selectedOption);
 			} 
 			
-			roleField.setDisabled(!character.isPlayerEditable() || editOnly);
 			roleDescription.setText(selectedRole != null ? selectedRole.getDescription() : "");
 		}
 		

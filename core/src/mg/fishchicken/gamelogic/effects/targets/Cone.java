@@ -8,6 +8,7 @@ import mg.fishchicken.gamestate.GameObjectPosition;
 import mg.fishchicken.gamestate.Tile;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 public class Cone extends TargetType {
 
@@ -50,6 +51,16 @@ public class Cone extends TargetType {
 			return null;
 		}
 		
+		if (length == 0) {
+			Vector2 vector = orientation.setNextTileInDirection(userTile.getX(), userTile.getY(), MathUtil.getVector2());
+			PositionArray returnValue = new PositionArray();
+			returnValue.add((int)vector.x, (int)vector.y);
+			targetX = Math.round((int)vector.x);
+			targetY = Math.round((int)vector.y);
+			MathUtil.freeVector2(vector);
+			return returnValue;
+		}
+
 		float myAngle = orientation.getDegrees();
 		targetX = Math.round(userTile.getX() + length*MathUtils.sinDeg(myAngle));
 		targetY = Math.round(userTile.getY() + length*MathUtils.cosDeg(myAngle));
@@ -73,7 +84,7 @@ public class Cone extends TargetType {
 
 	@Override
 	public float getSize() {
-		return length;
+		return MathUtil.boxValue(length, 1f, length);
 	}
 	
 	@Override

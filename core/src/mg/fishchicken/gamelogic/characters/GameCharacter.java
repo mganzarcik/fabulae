@@ -154,7 +154,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	private GameObject s_killer;
 	private boolean s_isAsleep;
 	private boolean s_isInvisible;
-	private boolean s_isEssential;
 	private mg.fishchicken.core.actions.Action onDeathAction;
 	private Action combatEndAction;
 	private ObjectMap<String, PersistentEffect> effects;
@@ -236,7 +235,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		s_spellImmunityCount = 0;
 		s_selected = false;
 		s_isAsleep = false;
-		s_isEssential = false;
 		s_lawEnfoncer = false;
 		s_isDetectingTraps = false;
 		s_playerEditable = true;
@@ -696,10 +694,10 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	 * inactive and drops all items.
 	 */
 	public void die() {
-		setActive(false);
 		if (!State.DEATH.equals(getState())) {
 			setState(State.DEATH);
 		} 
+		setActive(false);
 		
 		Log.logLocalized("DeathMessage", LogType.COMBAT, this.getName());
 		
@@ -1172,20 +1170,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	 * @return
 	 */
 	public boolean isEssential() {
-		return s_isEssential;
-	}
-	
-	/**
-	 * Marks this character as essential or not. 
-	 * 
-	 * If an essential character dies, the game ends,
-	 * regardless of whether the player has any other 
-	 * alive characters.
-	 * 
-	 * @param value
-	 */
-	public void setIsEssential(boolean value) {
-		s_isEssential = value;
+		return s_role != null && s_role.isEssential();
 	}
 	
 	@Override

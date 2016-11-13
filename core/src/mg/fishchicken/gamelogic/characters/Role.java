@@ -67,6 +67,7 @@ public class Role implements XMLLoadable, ThingWithId {
 	private boolean s_mandatory;
 	private boolean s_memberAtStart;
 	private boolean s_selectable;
+	private boolean s_essential;
 	private Array<Race> races;
 	private Array<Gender> genders;
 
@@ -95,6 +96,14 @@ public class Role implements XMLLoadable, ThingWithId {
 	 */
 	public boolean isMandatory() {
 		return s_mandatory;
+	}
+	
+	/**
+	 * Returns true if this role is essential, meaning a character with this role
+	 * cannot die, or the game will end.
+	 */
+	public boolean isEssential() {
+		return s_essential;
 	}
 	
 	/**

@@ -1,20 +1,26 @@
 package mg.fishchicken.core.util;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.Locale;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.SerializationException;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
+import groovy.lang.Script;
 import mg.fishchicken.audio.AudioContainer;
 import mg.fishchicken.audio.AudioProfile;
 import mg.fishchicken.audio.AudioTrack;
@@ -22,8 +28,6 @@ import mg.fishchicken.audio.Music;
 import mg.fishchicken.audio.Sound;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
-import mg.fishchicken.core.assets.Assets;
-import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.projectiles.ProjectileType.ScalingMethod;
 import mg.fishchicken.core.saveload.XMLField;
 import mg.fishchicken.core.saveload.XMLLoadable;
@@ -56,22 +60,6 @@ import mg.fishchicken.gamestate.SaveablePolygon;
 import mg.fishchicken.graphics.ParticleEffectManager;
 import mg.fishchicken.graphics.lights.LightDescriptor;
 import mg.fishchicken.graphics.models.CharacterModel;
-
-import org.codehaus.groovy.runtime.InvokerHelper;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.SerializationException;
-import com.badlogic.gdx.utils.StreamUtils;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class XMLUtil {
 	public static final String XML_ACTIONS = "actions";
@@ -140,34 +128,16 @@ public class XMLUtil {
 		
 		String id = scriptElement.getAttribute(XML_ATTRIBUTE_ID, null);
 		if (id != null) {
-			URLClassLoader cl = null;
-			try {
-				FileHandle scriptsFolder = Gdx.files.internal(Configuration.getFolderCompiledScripts());
-				if (!scriptsFolder.isDirectory()) {
-					scriptsFolder = Gdx.files.internal(Assets.BIN_FOLDER+Configuration.getFolderCompiledScripts());
-				}
-				
-				if (scriptsFolder.exists()) {
-					File dirFile = scriptsFolder.file();
-					File scriptFile = new File(dirFile, id+".class");
-					if (scriptFile.canRead()) {
-					    URL url = dirFile.toURI().toURL();
-					    URL[] urls = new URL[]{url};
-					    cl = new URLClassLoader(urls);
-					    Class<?> scriptClass = cl.loadClass(id);
-						return InvokerHelper.createScript(scriptClass, new Binding());
-					}
-				}
-			} catch (ClassNotFoundException | RuntimeException | MalformedURLException e) {
-				// do nothing and just build the class from the text
-			} finally {
-				if (cl != null) {
-					StreamUtils.closeQuietly(cl);
-				}
+			Script script = GroovyUtil.loadScript(id);
+			if (script != null) {
+				return script;
 			}
 		}
 		return GroovyUtil.createScript(scriptId, scriptElement.getText());
 	}
+	
+	
+	
 	
 	/**
 	 * Reads the target type from the supplied element.

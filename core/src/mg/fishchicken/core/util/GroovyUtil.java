@@ -6,12 +6,18 @@ import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
+import mg.fishchicken.core.assets.Assets;
 import mg.fishchicken.core.conditions.Condition;
+import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.i18n.Strings;
 import mg.fishchicken.core.logging.Log;
 import mg.fishchicken.gamelogic.actions.Action;
@@ -35,6 +41,8 @@ import mg.fishchicken.ui.UIManager;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -46,8 +54,38 @@ import com.badlogic.gdx.utils.StringBuilder;
 
 public class GroovyUtil {
 	
+	private static URLClassLoader classLoader;
+	
 	// VERY primitive cache to make sure we do not compile same scripts multiple times
 	private static ObjectMap<String, Script> cache = new ObjectMap<String, Script>();
+	
+	/**
+	 * Loads a precompiled script with the supplied ID. The script class file must 
+	 * be stored in the pre-compiled scripts folder (see {@link Configuration#getFolderCompiledScripts()}.
+	 * 
+	 * The method will return null if such a folder does not exist or if it does not contain
+	 * the desired script.
+	 * @param id
+	 * @return
+	 */
+	public static Script loadScript(final String id) {
+		String fileName = id+".class";
+		Script cached = cache.get(fileName);
+		if (cached != null) {
+			return cached;
+		}
+		try {
+			URLClassLoader cl = getURLClassLoader();
+			if (cl != null) {
+		    	Script script = InvokerHelper.createScript(cl.loadClass(fileName), new Binding());
+		    	cache.put(fileName, script);
+		    	return script;
+			}
+		} catch (ClassNotFoundException | RuntimeException | MalformedURLException e) {
+			// do nothing and just build the class from the text
+		}
+		return null; 
+	}
 	
 	public static Script createScript(final String id, String scriptText) {
 		return createScript(id, scriptText, null);
@@ -129,6 +167,22 @@ public class GroovyUtil {
 				StreamUtils.closeQuietly(loader);
 			}
 		}
+	}
+	
+	private static URLClassLoader getURLClassLoader() throws MalformedURLException {
+		if (classLoader != null) {
+			return classLoader;
+		}
+		FileHandle scriptsFolder = Gdx.files.internal(Configuration.getFolderCompiledScripts());
+		if (!scriptsFolder.isDirectory()) {
+			scriptsFolder = Gdx.files.internal(Assets.BIN_FOLDER+Configuration.getFolderCompiledScripts());
+		}
+		if (scriptsFolder.exists()) {
+			File dirFile = scriptsFolder.file();
+			URL url = dirFile.toURI().toURL();
+		    classLoader = new URLClassLoader(new URL[]{url});
+		}
+	    return classLoader;
 	}
 	
 	private static GroovyClassLoader getLoader(String targetDirectory) {

@@ -1617,7 +1617,7 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 	@Override
 	public boolean tileUnavailable(int tx, int ty) {
 		int tileId = getTileId(tx, ty);
-		return tileId < 0 || tileId >= unavailableTiles.length || unavailableTiles[tileId];
+		return tx < 0 || ty < 0 || tx >= getMapWidth() || ty >= getMapHeight() || unavailableTiles[tileId];
 	}
 	
 	/**
@@ -1649,11 +1649,11 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 	 */
 	public boolean blocked(GameObject mover, int tx, int ty, boolean unrevealedLogic, boolean oneCharPerTile) {		
 		// quick check if we are outside of the map
-		int tileId = getTileId(tx, ty);
-		if (tx < 0 || ty < 0 || (fogOfWar != null && tileId >= fogOfWar.length) || tileUnavailable(tx, ty)) {
+		if (tileUnavailable(tx, ty)) {
 			return true;
 		}
 		
+		int tileId = getTileId(tx, ty);
 		if (mover instanceof GameCharacter) {
 			if (unrevealedLogic && !s_startsRevealed && fogOfWar != null
 					&& fogOfWar[tileId] == 0) {

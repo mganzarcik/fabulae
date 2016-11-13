@@ -295,6 +295,20 @@ public enum Orientation {
 		return calculateOrientationToTarget(origin.getMap().isIsometric(), origin.position(), target.position());
 	}
 	
+	public Vector2 setNextTileInDirection(int sx, int sy, Vector2 nextTile) {
+		switch(this) {
+			case LEFT: nextTile.set(sx-1, sy); break;
+			case DOWN: nextTile.set(sx, sy-1); break;
+			case DOWNLEFT: nextTile.set(sx-1, sy-1); break;
+			case DOWNRIGHT: nextTile.set(sx+1, sy-1); break;
+			case RIGHT: nextTile.set(sx+1, sy); break;
+			case UP: nextTile.set(sx, sy+1); break;
+			case UPLEFT: nextTile.set(sx-1, sy+1); break;
+			case UPRIGHT:nextTile.set(sx+1, sy+1); break;
+		}
+		return nextTile;
+	}
+	
 	public static Orientation getCombinedOrientation(Orientation x, Orientation y) {
 		if (y == null) {
 			return x;

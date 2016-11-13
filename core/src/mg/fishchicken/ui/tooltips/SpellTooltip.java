@@ -28,7 +28,7 @@ public class SpellTooltip extends PerkTooltip {
 		
 		if (foci.size > 0) {
 			addLine();
-			addLine(Strings.getString(Spell.STRING_TABLE, "foci").toUpperCase(), style.headingStyle);
+			addLine(Strings.getString(Spell.STRING_TABLE, "foci"), style.headingStyle);
 			
 			Inventory inventory = character.getInventory();
 			for (Entry<String, Boolean> entry : foci.entries()) {

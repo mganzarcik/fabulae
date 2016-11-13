@@ -259,14 +259,14 @@ public class Effect implements XMLLoadable, ThingWithId {
 
 		params[0] = getDuration(context);
 		int i = 1;
-		if (parameters != null) {
-			for (EffectParameter param : parameters) {
-				params[i++] = param.getValue();
-			}
-		}
 		if (additionalScriptParams != null && additionalScriptParams.size() > 0) {
 			for (Object param : additionalScriptParams) {
 				params[i++] = param;
+			}
+		}
+		if (parameters != null) {
+			for (EffectParameter param : parameters) {
+				params[i++] = param.getValue();
 			}
 		}
 		return params;

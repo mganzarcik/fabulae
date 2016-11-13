@@ -1,1 +1,1 @@
-<!ELEMENT role ( name, description, races, genders, mandatory?, memberAtStart?, selectable? ) >
+<!ELEMENT role ( name, description, races, genders, mandatory?, essential?, memberAtStart?, selectable? ) >
