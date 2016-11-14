@@ -1,4 +1,4 @@
-<!ELEMENT weapon ( import?, properties, triggers?, equipCondition?, modifiers*, effects? ) >
+<!ELEMENT weapon ( import?, properties?, triggers?, equipCondition?, modifiers*, effects? ) >
 
 <!ELEMENT effects ANY >
 

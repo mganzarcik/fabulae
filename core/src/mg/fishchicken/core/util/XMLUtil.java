@@ -92,6 +92,7 @@ public class XMLUtil {
 	public static final String XML_CONDITION = "condition";
 	public static final String XML_TRIGGERS = "triggers";
 	public static final String XML_PARAMETERS = "parameters";
+	public static final String XML_END_DATE= "endDate";
 	public static final String XML_TYPE = "type";
 	public static final String XML_INTARRAY = "IntArray";
 	public static final String XML_BOOLEAN = "boolean";

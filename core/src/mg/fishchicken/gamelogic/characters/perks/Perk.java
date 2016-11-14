@@ -401,6 +401,22 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 	 * @return
 	 */
 	public boolean canBeActivated(GameCharacter character) {
+		return canBeActivated(character, false);
+		
+	}
+	
+	/**
+	 * Returns true if the supplied character fulfills all
+	 * requirements in order to activate this perk. Please note
+	 * that in order to be able to activate, the character
+	 * must also fulfill all the requirements required to learn 
+	 * the perk.
+	 * 
+	 * @param character
+	 * @param noApCheck - if true, actions points of the character are not considered
+	 * @return
+	 */
+	public boolean canBeActivated(GameCharacter character, boolean noApCheck) {
 		if (!isActivated() || !canBeLearned(character)) {
 			return false;
 		}
@@ -415,7 +431,7 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 			return false;
 		}
 		
-		if (GameState.isCombatInProgress() && getApCost(character) > 0 && characterStats.getAPAct() < getApCost(character)) {
+		if (!noApCheck && GameState.isCombatInProgress() && getApCost(character) > 0 && characterStats.getAPAct() < getApCost(character)) {
 			return false;
 		}
 		

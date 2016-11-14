@@ -327,7 +327,7 @@ public final class Configuration implements XMLLoadable {
 	@XMLField(fieldPath = "crime.defaultCrimeSpottedChatterId")
 	private String defaultCrimeSpottedChatterId = "crimeSpotted";
 	@XMLField(fieldPath = "crime.hostilityDuration")
-	private int hostilityDuration = 24;
+	private int hostilityDuration = 8;
 
 	@XMLField(fieldPath = "start.map")
 	private String startMap;

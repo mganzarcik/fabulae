@@ -115,7 +115,7 @@ public class UsePerkAction extends AttackAction implements SkillCheckModifier  {
 			if (!perk.isActivated()) {
 				isFinished = true;
 				logCannotUsePassiveError();
-			} else if (!perk.canBeActivated(user)) {
+			} else if (!perk.canBeActivated(user, useForNoAP)) {
 				isFinished = true;
 				logCannotUseActivatedError();
 			}

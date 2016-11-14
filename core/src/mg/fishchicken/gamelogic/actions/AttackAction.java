@@ -87,17 +87,20 @@ public class AttackAction extends MoveToAction implements OnProjectileHitCallbac
 		character = (GameCharacter) ac;
 		stats = character.stats();
 		targetPosition = null;
+		int targetX = -1, targetY = -1;
 		if (parameters.length == 1) {
 			this.target = (GameCharacter)parameters[0];
-			targetId = target.getInternalId();
-			target.pauseAllActions();
-			targetPosition = target.position().tile();
-			super.init(ac, targetPosition.getX(), targetPosition.getY());
 		} else if (parameters.length == 2) { 
-			// if we had two params supplied, we assume they are coordinates and we degrade to a simple MoveToAction
-			super.init(ac, (Integer)parameters[0], (Integer)parameters[1]);
+			targetX = (Integer)parameters[0];
+			targetY = (Integer)parameters[1];
+			this.target = (GameCharacter)character.getMap().getGameObjectAt(targetX, targetY, GameCharacter.class);
 		}
 		if (target != null) {
+			targetId = target.getInternalId();
+			targetPosition = target.position().tile();
+			targetX = targetPosition.getX();
+			targetY = targetPosition.getY();
+			target.pauseAllActions();
 			rangedAttack = determineAttackingWeapons(character, targetPosition.getX(), targetPosition.getY(), attackingWeapons);
 			// check if we cannot perform the attack at all - if we cannot, we are done immediately
 			if (isNextToTarget()
@@ -106,6 +109,9 @@ public class AttackAction extends MoveToAction implements OnProjectileHitCallbac
 				actionFinished = true;
 				attackFinished = true;
 			}
+		}
+		if (targetX > 0 || targetY > 0) {
+			super.init(ac, targetX, targetY);
 		}
 	}
 

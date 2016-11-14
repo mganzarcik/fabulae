@@ -1,12 +1,20 @@
 package mg.fishchicken.gamelogic.effects;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.StringBuilder;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
+import groovy.lang.Binding;
+import groovy.lang.Script;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.ThingWithId;
@@ -20,15 +28,7 @@ import mg.fishchicken.core.saveload.XMLSaveable;
 import mg.fishchicken.core.util.GroovyUtil;
 import mg.fishchicken.core.util.StringUtil;
 import mg.fishchicken.core.util.XMLUtil;
-
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
-import com.badlogic.gdx.utils.StringBuilder;
+import mg.fishchicken.gamelogic.time.GameCalendarDate;
 
 /**
  * Effect is basically a Groovy script. Effects can be attached to
@@ -334,8 +334,8 @@ public class Effect implements XMLLoadable, ThingWithId {
 	public static class PersistentEffect implements XMLSaveable {
 		private Effect s_parentEffect;
 		private String s_name;
-		private float s_remainingDuration;
 		private float s_timeToNextTurn;
+		private GameCalendarDate dateToEnd;
 		private int s_turn;
 		private String s_userId;
 		private Binding context;
@@ -353,7 +353,8 @@ public class Effect implements XMLLoadable, ThingWithId {
 		
 		public PersistentEffect(EffectContainer container, Effect parentEffect, float duration, GameObject user, GameObject target) {
 			this.s_parentEffect = parentEffect;
-			s_remainingDuration = duration;
+			dateToEnd = new GameCalendarDate(GameState.getCurrentGameDate());
+			dateToEnd.addToSecond(Configuration.getCombatTurnDurationInGameSeconds() * duration * 2);
 			s_timeToNextTurn = 1;
 			s_turn = 0;
 			s_isFinished = false;
@@ -468,11 +469,8 @@ public class Effect implements XMLLoadable, ThingWithId {
 		 * and should be finished and removed, false otherwise.
 		 */
 		public boolean executePersistentEffect(float delta) {
-			if (s_remainingDuration <= 0) {
-				return true;
-			}
+			GameCalendarDate currDate = GameState.getCurrentGameDate();
 
-			s_remainingDuration -= delta;
 			s_timeToNextTurn -= delta;
 			// if enough time has passed to pass a whole turn,
 			// execute per-turn effects if we have any
@@ -486,7 +484,7 @@ public class Effect implements XMLLoadable, ThingWithId {
 				}
 			}
 			
-			if (s_remainingDuration <= 0) {
+			if (dateToEnd == null || dateToEnd.compareTo(currDate) <= 0) {
 				return true;
 			}
 			
@@ -511,7 +509,7 @@ public class Effect implements XMLLoadable, ThingWithId {
 				return;
 			}
 			s_isFinished = true;
-			s_remainingDuration = 0;
+			dateToEnd = null;
 			if (s_parentEffect.onEndScript != null) {
 				s_parentEffect.onEndScript.setBinding(getContext());
 				s_parentEffect.onEndScript.run();
@@ -525,6 +523,12 @@ public class Effect implements XMLLoadable, ThingWithId {
 		public void writeToXML(XmlWriter writer) throws IOException {
 			writer.element(XML_EFFECT);
 			XMLUtil.writePrimitives(this, writer);
+			
+			if (dateToEnd != null) {
+				writer.element(XMLUtil.XML_END_DATE);
+				dateToEnd.writeToXML(writer);
+				writer.pop();
+			}
 			
 			writer.element(XMLUtil.XML_PARAMETERS);
 			for (EffectParameter param : parameters) {
@@ -546,6 +550,13 @@ public class Effect implements XMLLoadable, ThingWithId {
 		@Override
 		public void loadFromXML(Element root) throws IOException {
 			XMLUtil.readPrimitiveMembers(this, root);
+			
+			Element dateElement = root.getChildByName(XMLUtil.XML_END_DATE);
+			if (dateElement != null) {
+				dateToEnd = new GameCalendarDate(GameState.getCurrentGameDate());
+				dateToEnd.readFromXML(dateElement);
+			}
+			
 			Element paramsElement = root.getChildByName(XMLUtil.XML_PARAMETERS);
 			parameters = new Array<EffectParameter>();
 			for (int i = 0; i < paramsElement.getChildCount(); ++i) {

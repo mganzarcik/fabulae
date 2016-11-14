@@ -111,7 +111,17 @@ public class AStarPathFinder implements PathFinder {
 	}
 	
 	public Class<? extends Action> getActionForDestination(GameObject mover, int x, int y) {
-		GameObject goAtCoords = map.getGameObjectAt(x, y);
+		tempSet.clear();
+		map.getAllGameObjectsAt(tempSet, x, y, false, false);
+		GameObject goAtCoords = tempSet.size > 0 ? tempSet.first() : null;
+		// characters are chosen first, if there is one
+		for (GameObject go : tempSet) {
+			if (go instanceof GameCharacter) {
+				goAtCoords = go;
+				break;
+			}
+		}
+		
 		target = goAtCoords;
 		Tool activeTool = pcc.getActiveTool();
 		Class<? extends Action> action = null;
@@ -502,7 +512,8 @@ public class AStarPathFinder implements PathFinder {
 		map.getAllObjectsInArea(tempSet, temPositionArray, GameCharacter.class);
 		
 		for (GameObject neighbor : tempSet) {
-			if (Faction.areHostile((AbstractGameCharacter)neighbor, mover)) {
+			GameCharacter character = (GameCharacter) neighbor;
+			if (!character.isAsleep() && Faction.areHostile(character, mover)) {
 				return true;
 			}
 		}
