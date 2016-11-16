@@ -151,8 +151,7 @@ public class WeatherManager {
 	 * 
 	 * @param amount
 	 */
-	@SuppressWarnings("unused")
-	private void startSnow(PrecipitationAmount amount) {
+	public void startSnow(PrecipitationAmount amount) {
 		startNewWeather(new Weather(this,
 				Configuration.getSnowTemperatureThreshold() - 1, amount, GameState
 						.getCurrentGameDate().getWeatherProfile()));

@@ -1,10 +1,12 @@
-<!ELEMENT activatedPerk ( name, description, iconFile, rank, level, sp?, ap?, hp?, mp?, combatOnly, automaticOnHitAnimation?, isAttack?, animationState?, learnRequirements?, activationRequirements?, modifiers?, target?, projectile?, effects? ) >
+<!ELEMENT activatedPerk ( name, description, synergiesDescription?, iconFile, rank, level, sp?, ap?, hp?, mp?, combatOnly, automaticOnHitAnimation?, isAttack?, animationState?, learnRequirements?, activationRequirements?, modifiers?, target?, projectile?, effects? ) >
 
-<!ELEMENT passivePerk ( name, description, iconFile, characterSound?, rank, level, learnRequirements?, modifiers? ) >
+<!ELEMENT passivePerk ( name, description, synergiesDescription?, iconFile, characterSound?, rank, level, learnRequirements?, modifiers? ) >
 
 <!ELEMENT name  ( #PCDATA ) >
 
 <!ELEMENT description  ( #PCDATA ) >
+
+<!ELEMENT synergiesDescription  ( #PCDATA ) >
 
 <!ELEMENT iconFile  ( #PCDATA ) >
 

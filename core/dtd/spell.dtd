@@ -1,8 +1,10 @@
-<!ELEMENT spell ( name, description, iconFile, characterSound?, rank, level?, sp?, ap?, hp?, mp?, canBeCast?, combatOnly, automaticOnHitAnimation?, animationState?, learnRequirements?, activationRequirements?, foci?, modifiers?, target?, projectile?, effects? ) >
+<!ELEMENT spell ( name, description, synergiesDescription?, iconFile, characterSound?, rank, level?, sp?, ap?, hp?, mp?, canBeCast?, combatOnly, automaticOnHitAnimation?, animationState?, learnRequirements?, activationRequirements?, foci?, modifiers?, target?, projectile?, effects? ) >
 
 <!ELEMENT name  ( #PCDATA ) >
 
 <!ELEMENT description  ( #PCDATA ) >
+
+<!ELEMENT synergiesDescription  ( #PCDATA ) >
 
 <!ELEMENT iconFile  ( #PCDATA ) >
 

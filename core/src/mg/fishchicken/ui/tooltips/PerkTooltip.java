@@ -50,6 +50,8 @@ public class PerkTooltip extends CompositeTooltip {
 		
 		buildEffectsAndModifiers(character, fsb);
 		
+		buildSynergiesDescription(fsb);
+		
 		StringUtil.freeFSB(fsb);
 	}
 	
@@ -66,6 +68,15 @@ public class PerkTooltip extends CompositeTooltip {
 	
 	protected void buildDescription(StringBuilder fsb) {
 		addLine(perk.getDescription());
+	}
+	
+	protected void buildSynergiesDescription(StringBuilder fsb) {
+		String description =  perk.getSynergiesDescription();
+		if (!StringUtil.nullOrEmptyString(description)) {
+			addLine();
+			addLine(Strings.getString(Perk.STRING_TABLE, "synergiesDescription"), style.subheadingStyle);
+			addLine(description);
+		}
 	}
 	
 	protected void buildEffectsAndModifiers(GameCharacter character, StringBuilder fsb) {

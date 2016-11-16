@@ -115,7 +115,7 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 	}
 		
 	private String s_id;
-	private String s_name, s_description;
+	private String s_name, s_description, s_synergiesDescription;
 	private int s_level, s_ap, s_mp, s_sp, s_hp; // requirements and costs for the perk
 	private Condition s_learnRequirements, s_activationRequirements;
 	private boolean s_isAttack, s_isActivated, s_combatOnly, s_automaticOnHitAnimation;
@@ -172,24 +172,16 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 		return s_id;
 	}
 
-	public void setName(String name) {
-		s_name = name;
-	}
-
 	public String getDescription() {
 		return Strings.getString(s_description);
 	}
-
-	public void setDescription(String description) {
-		s_description = description;
+	
+	public String getSynergiesDescription() {
+		return Strings.getString(s_synergiesDescription);
 	}
 
 	public int getLevelRequirement() {
 		return s_level;
-	}
-
-	public void setLevelRequirement(int level) {
-		s_level = level;
 	}
 
 	@Override
@@ -216,32 +208,16 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 		return character.stats().getAPCostToAttackModified(s_ap);
 	}
 
-	public void setApCost(int ap) {
-		s_ap = ap;
-	}
-
 	public int getMpCost() {
 		return s_mp;
-	}
-
-	public void setMpCost(int mp) {
-		s_mp = mp;
 	}
 
 	public int getSpCost() {
 		return s_sp;
 	}
 
-	public void setSpCost(int sp) {
-		s_sp = sp;
-	}
-
 	public int getHpCost() {
 		return s_hp;
-	}
-	
-	public void setHpCost(int hp) {
-		s_hp = hp;
 	}
 
 	/**
@@ -484,11 +460,6 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 	public int getRank() {
 		return s_rank;
 	}
-
-	public void setRank(int rank) {
-		s_rank = rank;
-	}
-
 	
 	@Override
 	public void loadFromXML(FileHandle file) throws IOException {
