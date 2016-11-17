@@ -30,7 +30,7 @@ public class EnableAIAction extends BasicAction {
 
 	@Override
 	public void update(float deltaTime) {
-		character.enableAI();
+		character.brain().enable();
 		enabled = true;
 	}
 

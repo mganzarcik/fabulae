@@ -53,9 +53,6 @@ public abstract class GameObject implements ActionsContainer, VariableContainer,
 	public static final String XML_START= "start";
 	public static final String XML_DAMAGE_QUEUE = "damageQueue";
 	public static final String XML_DAMAGE_INFO = "damageInfo";
-	public static final String XML_COMBAT_END_SEARCH_ACTION = "combatEndSearchAction";
-	public static final String XML_CURRENT_AI_ACTION = "currentAIAction";
-	public static final String XML_AI_BACKUP = "aiBackup";
 	public static final String XML_VISITED = "visited";
 	public static final String XML_CURRENT = "current";
 	public static final String XML_ON_DEATH = "onDeath";
@@ -317,7 +314,13 @@ public abstract class GameObject implements ActionsContainer, VariableContainer,
 		}
 	}
 	
-	protected boolean hasAnyBlockingAction() {
+	/**
+	 * Returns true if this GO has any active action
+	 * that should be blocking combat.
+	 * 
+	 * @return
+	 */
+	public boolean hasAnyBlockingAction() {
 		for (Action a : actions) {
 			if (a.isBlockingInCombat()) {
 				return true;

@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Locale;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.ThingWithId;
 import mg.fishchicken.core.assets.Assets;
 import mg.fishchicken.core.configuration.Configuration;
@@ -13,12 +19,6 @@ import mg.fishchicken.core.logging.Log.LogType;
 import mg.fishchicken.core.saveload.XMLSaveable;
 import mg.fishchicken.core.util.XMLUtil;
 import mg.fishchicken.gamelogic.characters.AbstractGameCharacter;
-
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 /**
  * A faction is a group of characters that have opinions about other factions.
@@ -48,6 +48,7 @@ public class Faction implements XMLSaveable, ThingWithId {
 	private static ObjectMap<String, String> factions = new ObjectMap<String, String>();
 	
 	private ObjectMap<String, Integer> disposition = new ObjectMap<String, Integer>();
+	private Element xmlData;
 	private boolean s_shouldBeSaved;
 	private String s_id;
 	private HashSet<AbstractGameCharacter> members = new HashSet<AbstractGameCharacter>();
@@ -62,6 +63,15 @@ public class Faction implements XMLSaveable, ThingWithId {
 			return NO_FACTION;
 		}
 		return Assets.get(factions.get(id.toLowerCase(Locale.ENGLISH)));
+	}
+	
+	/**
+	 * Resets all factions to the initial state. 
+	 */
+	public static void resetAllFactions() {
+		for (String factionFile : factions.values()) {
+			Assets.get(factionFile, Faction.class).reset();
+		}
 	}
 	
 	/**
@@ -307,6 +317,12 @@ public class Faction implements XMLSaveable, ThingWithId {
 		return getDispositionTowardsPlayer() <= -100;
 	}
 	
+	private void reset() {
+		s_shouldBeSaved = false;
+		members.clear();
+		loadFromXML(xmlData);
+	}
+	
 	public void loadFromXML(FileHandle factionFile) throws IOException {
 		XmlReader xmlReader = new XmlReader();
 		Element root = xmlReader.parse(factionFile);
@@ -327,7 +343,8 @@ public class Faction implements XMLSaveable, ThingWithId {
 	}
 
 	@Override
-	public void loadFromXML(Element root) throws IOException {
+	public void loadFromXML(Element root) {
+		xmlData = root;
 		XMLUtil.readPrimitiveMembers(this,
 				root.getChildByName(XMLUtil.XML_PROPERTIES));
 		

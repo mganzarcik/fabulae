@@ -1,12 +1,6 @@
 package mg.fishchicken.gamelogic.characters;
 
-import groovy.lang.Binding;
-
 import java.io.IOException;
-
-import mg.fishchicken.core.saveload.XMLSaveable;
-import mg.fishchicken.core.util.XMLUtil;
-import mg.fishchicken.gamelogic.actions.Action;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
@@ -16,6 +10,12 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.badlogic.gdx.utils.XmlWriter;
+
+import groovy.lang.Binding;
+import mg.fishchicken.core.GameObject;
+import mg.fishchicken.core.saveload.XMLSaveable;
+import mg.fishchicken.core.util.XMLUtil;
+import mg.fishchicken.gamelogic.actions.Action;
 
 /**
  * A combination of a AIScript and its variables.<br />
@@ -74,10 +74,10 @@ public class AIScriptPackage implements XMLSaveable {
 		this.loadFromXML(aiElement);
 	}
 	
-	public Action run(AbstractGameCharacter character) {
+	public Action run(GameObject go) {
 		if (aiScript != null) {
 			Binding binding = new Binding();
-			binding.setVariable("character", character);
+			binding.setVariable("character", go);
 			for (Entry<String, Object> parameter : parameters.entries()) {
 				binding.setVariable(parameter.key, parameter.value);
 			}

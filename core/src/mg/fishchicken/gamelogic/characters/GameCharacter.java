@@ -1,11 +1,26 @@
 package mg.fishchicken.gamelogic.characters;
 
-import groovy.lang.Binding;
-import groovy.lang.Script;
-
 import java.io.IOException;
 import java.util.Iterator;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
+import groovy.lang.Binding;
 import mg.fishchicken.audio.AudioProfile;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
@@ -22,9 +37,6 @@ import mg.fishchicken.core.util.MathUtil;
 import mg.fishchicken.core.util.Orientation;
 import mg.fishchicken.core.util.XMLUtil;
 import mg.fishchicken.gamelogic.actions.Action;
-import mg.fishchicken.gamelogic.actions.ChainAction;
-import mg.fishchicken.gamelogic.actions.MoveToAction;
-import mg.fishchicken.gamelogic.actions.WanderAction;
 import mg.fishchicken.gamelogic.characters.groups.PlayerCharacterGroup;
 import mg.fishchicken.gamelogic.characters.perks.Perk;
 import mg.fishchicken.gamelogic.characters.perks.PerksContainer;
@@ -67,23 +79,6 @@ import mg.fishchicken.graphics.models.ItemModel;
 import mg.fishchicken.graphics.renderers.FloatingTextRenderer;
 import mg.fishchicken.graphics.renderers.GameMapRenderer;
 import mg.fishchicken.ui.UIManager;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntMap;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 public class GameCharacter extends AbstractGameCharacter implements XMLLoadable, TextDrawer, PerksContainer, SpellsContainer, SkillCheckModifier, InventoryContainer {
 	
@@ -148,14 +143,10 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	private Array<Perk> perks;
 	private Array<Spell> spells;
 	
-	private float s_combatStartX, s_combatStartY;
-	private boolean s_shouldReturnAfterCombat;
-	private boolean s_shouldSearchAfterCombat;
 	private GameObject s_killer;
 	private boolean s_isAsleep;
 	private boolean s_isInvisible;
 	private mg.fishchicken.core.actions.Action onDeathAction;
-	private Action combatEndAction;
 	private ObjectMap<String, PersistentEffect> effects;
 	private int s_spellImmunityCount;
 	private boolean s_metNPCBefore;
@@ -182,6 +173,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	private IntMap<ItemAnimationMap> itemAnimationMaps;
 	private IntMap<ItemModel> itemModels;
 	private IntMap<Animation> itemAnimations;
+	private GameCharacterBrain brain;
 	
 	/**
 	 * Empty constructor for game loading.
@@ -261,6 +253,12 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	}
 	
 	@Override
+	protected Brain createBrain() {
+		brain = new GameCharacterBrain(this); 
+		return brain; 
+	}
+	
+	@Override
 	public void update(float deltaTime) {
 		if (chatterRenderer != null) {
 			chatterRenderer.setMuteChatter(s_mutedChatter);
@@ -277,16 +275,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	
 		super.update(deltaTime); 
 		
-		if (isActive()) {
-			if (combatEndAction != null) {
-				combatEndAction.update(deltaTime);
-				// the null check is important here, since the update to the search action
-				// might have initiated combat, which would zero out the search action
-				if (combatEndAction.isFinished()) {
-					combatEndAction = null;
-					clearLastKnownEnemyPosition();
-				}
-			} 
+		if (isActive()) { 
 			if (!GameState.isCombatInProgress() && getMap() != null && gameState.getCurrentMap() != null) {
 				// convert real-time delta time into game turns
 				float effectDurationDelta = (deltaTime * gameState.getCurrentMap().getGameTimeMultiplier())
@@ -420,22 +409,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 				s_tilesTillStealthCheck = Configuration.getTilesPerStealthCheck() + stats.skills().getSkillRank(Skill.SNEAKING);
 			}
 			
-		}
-	}
-	
-	@Override
-	public void removeAllActions() {
-		super.removeAllActions();
-		if (combatEndAction != null) {
-			combatEndAction.onRemove(this);
-			combatEndAction = null;
-		}
-	}
-	
-	@Override
-	protected void determineNextAIAction() {
-		if (!isAsleep() && !belongsToPlayerFaction() && combatEndAction == null) {
-			super.determineNextAIAction();
 		}
 	}
 	
@@ -701,6 +674,8 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		
 		Log.logLocalized("DeathMessage", LogType.COMBAT, this.getName());
 		
+		endAllPersistentEffects();
+		
 		PlayerCharacterGroup pcg = GameState.getPlayerCharacterGroup();
 		if (pcg.getNonPlayerCharacters().contains(this, true)) {
 			pcg.removeNonPlayerCharacter(this);
@@ -714,7 +689,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		stats.setMPAct(0);
 		stats.setSPAct(0);
 		setGlobal(false);
-		disableAI();
+		brain.disable();
 		updateVisibleArea();
 		
 		inventory.dropEverythingToTheGround();
@@ -876,6 +851,14 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		}
 	}
 	
+
+	private void endAllPersistentEffects() {
+		for (PersistentEffect pe : effects.values()) {
+			pe.finish();
+		}
+		effects.clear();
+	}
+	
 	@Override
 	public void addPerk(Perk perk) {
 		perks.add(perk);
@@ -924,31 +907,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		return perks.contains(perk, false);
 	}
 
-	public void onCombatStart() {
-		removeAllVerbActions();
-		if (combatEndAction != null) { 
-			combatEndAction.onRemove(this);
-			combatEndAction = null;
-		}
-		
-		s_combatStartX = position.getX();
-		s_combatStartY = position.getY();
-		
-		if (MathUtils.random(100) < s_chatter.getChanceToSay(ChatterType.COMBAT_STARTED, getCurrentLocations())) {
-			shout(s_chatter.getTexts(ChatterType.COMBAT_STARTED, getCurrentLocations()).random());
-		}
-	}
-	
-	/**
-	 * Does stuff that should happen on the start of each of this
-	 * character's turns.
-	 */
-	public void onTurnStart() {
-		stats.setAPAct(stats.getAPMax());
-		inventoryOpenedThisTurn = false;
-		updatePersistentEffects(1);
-	}
-	
 	/**
 	 * Updates persistent effects currently active on this character.
 	 * 
@@ -964,26 +922,33 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 			}
 		}
 	}
+
+	public void onCombatStart() {
+		removeAllVerbActions();
+		brain.onCombatStart();
+		
+		if (MathUtils.random(100) < s_chatter.getChanceToSay(ChatterType.COMBAT_STARTED, getCurrentLocations())) {
+			shout(s_chatter.getTexts(ChatterType.COMBAT_STARTED, getCurrentLocations()).random());
+		}
+	}
 	
 	public void onCombatEnd() {
 		if (belongsToPlayerFaction()) {
 			return;
 		}
 		
-		combatEndAction = null;
 		resetCharacterCircleColor();
-		if (s_shouldReturnAfterCombat || (getLastKnownEnemyPosition() != null && s_shouldSearchAfterCombat)) {
-			ChainAction chain = new ChainAction(this);
-			if (getLastKnownEnemyPosition() != null && s_shouldSearchAfterCombat) {
-				chain.addAction(new WanderAction(this, getLastKnownEnemyPosition(), 5, 60, 30));
-			}
-			if (s_shouldReturnAfterCombat) {
-				chain.addAction(new MoveToAction(this, (int)s_combatStartX, (int)s_combatStartY));
-			}
-			if (chain.size() > 0) {
-				combatEndAction = chain;
-			}
-		} 
+		brain.onCombatEnd();
+	}
+	
+	/**
+	 * Does stuff that should happen on the start of each of this
+	 * character's turns.
+	 */
+	public void onTurnStart() {
+		stats.setAPAct(stats.getAPMax());
+		inventoryOpenedThisTurn = false;
+		updatePersistentEffects(1);
 	}
 	
 	@Override
@@ -1003,13 +968,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	@Override
 	public int getCostForAction(Class<? extends Action> action, Object target) {
 		return Action.getAPCostForAction(stats(), action, target);
-	}
-	
-	@Override
-	public void updateTurnAction(float deltaTime) {
-		if (!isAsleep()) {
-			super.updateTurnAction(deltaTime);
-		}
 	}
 	
 	public boolean isMemberOfPlayerGroup() {
@@ -1048,8 +1006,8 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	 */
 	public boolean dealDamage(float damage, GameObject damageSource, float delay) {
 		if (delay <= 0) {
-			stats.addToHP(-damage);
 			s_killer = damageSource;
+			stats.addToHP(-damage);
 			if (damageSource instanceof GameCharacter && (stats.getHPAct() > 0 || stats.isInvincible())) {
 				gameState.getCrimeManager().registerNewCrime(new Assault((GameCharacter)damageSource, this));
 			}
@@ -1208,51 +1166,12 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	}
 	
 	@Override
-	public boolean finishedTurn() {
-		if (isAsleep() || stats.getAPAct() <= 0) {
-			removeCurrentTurnAction();
-			return true;
-		}
-		return super.finishedTurn();
-	}
-	
-	@Override
 	public void resetCharacterCircleColor() {
 		if (belongsToPlayerFaction() && !isSelected()) {
 			getCharacterCircle().setColor(ColorUtil.BLACK_FIFTY);
 		} else {
 			super.resetCharacterCircleColor();
 		}
-	}
-	
-	/**
-	 * This replaces the character's defined AIScript with a new one.
-	 * If you wish to restore the original AI script the character was
-	 * loaded with, just call restoreAIScript.
-	 * {@link #restoreAIScript()}.
-	 * 
-	 * If the character is currently controlled by the player,
-	 * this will also take the control away.
-	 * 
-	 * @param newAIScript
-	 */
-	public void setOverrideAIScript(AIScriptPackage newAIScript) {
-		super.setOverrideAIScript(newAIScript);
-		GameState.getPlayerCharacterGroup().temporarilyRemoveMember(this);
-	}
-	
-	/**
-	 * Restores the original, XML master data defined AI Script 
-	 * of this character in case it was replaced by calling 
-	 * {@link #setOverrideAIScript(Script)}.
-	 * 
-	 * If the character was controlled by the player at the time of the override,
-	 * this will restore the control.
-	 * 
-	 */
-	public void restoreAIScript() {
-		super.restoreAIScript();
-		GameState.getPlayerCharacterGroup().restoreTemporarilyRemovedMember(this);
 	}
 	
 	/**
@@ -1464,11 +1383,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		
 		onDeathAction = mg.fishchicken.core.actions.Action.getAction(root.getChildByName(XML_ON_DEATH));
 		
-		Element combatEndSearchActionElement = root.getChildByName(XML_COMBAT_END_SEARCH_ACTION);
-		if (combatEndSearchActionElement != null && combatEndSearchActionElement.getChildCount() > 0) {
-			combatEndAction = Action.readFromXML(combatEndSearchActionElement.getChild(0), this);
-		}
-		
 		Element effectsElement = root.getChildByName(Effect.XML_PERSISTENT);
 		if (effectsElement != null) {
 			for (int i = 0; i < effectsElement.getChildCount(); ++i) {
@@ -1498,12 +1412,6 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		XMLUtil.writePerks(this, writer);
 		XMLUtil.writeSpells(this, writer);
 		inventory.writeToXML(writer);
-		
-		if (combatEndAction != null) {
-			writer.element(XML_COMBAT_END_SEARCH_ACTION);
-			combatEndAction.writeToXML(writer);
-			writer.pop();
-		}
 		
 		if (effects.size > 0) {
 			writer.element(Effect.XML_PERSISTENT);

@@ -590,7 +590,7 @@ public class GameMapLoader extends TiledMapLoader {
 						Role.getRole(role));
 				if (playerCreatedCharacter != null) {
 					playerCreatedCharacter.setId(character.getId());
-					playerCreatedCharacter.setAIScript(character.getAIScript());
+					playerCreatedCharacter.brain().setAIScript(character.brain().getAIScript());
 					playerCreatedCharacter.setDialogueId(character.getDialogueId());
 					int level = character.stats().getLevel();
 					while (playerCreatedCharacter.stats().getLevel() < level) {

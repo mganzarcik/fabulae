@@ -25,7 +25,7 @@ public class DisableAI extends Action {
 	@Override
 	protected void run(Object object, Binding parameters) {
 		String character = getParameter(XML_CHARACTER);
-		((GameCharacter) (character == null ? object : GameState.getGameObjectById(character))).disableAI();
+		((GameCharacter) (character == null ? object : GameState.getGameObjectById(character))).brain().disable();
 	}
 
 	@Override

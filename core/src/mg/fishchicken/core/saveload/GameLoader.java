@@ -159,6 +159,7 @@ public class GameLoader {
 		GameState.getPlayerCharacterGroup().unload();
 		
 		Quest.resetAllQuests();
+		Faction.resetAllFactions();
 		
 		UIManager.resetUI();
 		Music.stopPlayingMusic();

@@ -2,6 +2,11 @@ package mg.fishchicken.gamelogic.combat;
 
 import java.util.Iterator;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
 import mg.fishchicken.audio.Music;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
@@ -10,17 +15,13 @@ import mg.fishchicken.core.i18n.Strings;
 import mg.fishchicken.core.logging.Log;
 import mg.fishchicken.core.logging.Log.LogType;
 import mg.fishchicken.core.util.PositionArray;
+import mg.fishchicken.gamelogic.characters.Brain;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
 import mg.fishchicken.gamelogic.characters.groups.PlayerCharacterGroup;
 import mg.fishchicken.gamelogic.locations.GameMap;
 import mg.fishchicken.gamestate.GameObjectPosition;
 import mg.fishchicken.gamestate.Tile;
 import mg.fishchicken.tweening.PositionedThingTweenAccessor;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 public class CombatManager {
 	
@@ -117,6 +118,7 @@ public class CombatManager {
 			}
 			if (aiCharacterQueue.size > 0) {
 				activeAICharacter = aiCharacterQueue.pop();
+				activeAICharacter.resetCharacterCircleColor();
 			}
 		}
 		
@@ -124,8 +126,9 @@ public class CombatManager {
 			if (!activeAICharacter.isActive()) {
 				activeAICharacter = null;
 			} else {
-				activeAICharacter.updateTurnAction(deltaTime);
-				if (activeAICharacter.finishedTurn()) {
+				Brain brain = activeAICharacter.brain();
+				brain.updateCombatAction(deltaTime);
+				if (brain.finishedTurn()) {
 					activeAICharacter = null;
 				}
 			}

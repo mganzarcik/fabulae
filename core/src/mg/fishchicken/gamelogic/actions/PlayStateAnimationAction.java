@@ -112,7 +112,7 @@ public class PlayStateAnimationAction extends BasicAction {
 	
 	@Override
 	public void readAndValidateParamateresFromXML(Element actionElement) {
-		String state = actionElement.get(XML_ATTRIBUTE_STATE, null);
+		state = actionElement.get(XML_ATTRIBUTE_STATE, null);
 		if (state == null) {
 			throw new GdxRuntimeException("state cannot be null");
 		}

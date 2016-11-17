@@ -58,8 +58,4 @@ public class PlayerCharacter extends GameCharacter implements XMLLoadable {
 		return los;
 	}
 
-	@Override
-	public boolean blockingTurnActionInProgress() {
-		return hasAnyBlockingAction();
-	}
 }

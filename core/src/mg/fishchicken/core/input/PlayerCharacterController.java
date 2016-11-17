@@ -525,7 +525,7 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 	private boolean shouldIgnoreTouchUp() {
 		return GameState.isCombatInProgress()
 				&& (!GameState.isPlayersTurn() || (group.getGroupLeader() != null && group.getGroupLeader()
-						.blockingTurnActionInProgress()));
+						.brain().blockingTurnActionInProgress()));
 	}
 
 	private boolean handleGroupActions(GameObject clickedGameObject, Vector2 tileCoordinates) {
@@ -864,13 +864,13 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 	private boolean isEffectTargetDisabled() {
 		return (overUIElement && !overCharacterPortrait) || !targetSelectionInProgress
 				|| UIManager.isCharacterScreenOpen() || group.getGroupLeader() == null
-				|| !group.getGroupLeader().isActive() || group.getGroupLeader().blockingTurnActionInProgress();
+				|| !group.getGroupLeader().isActive() || group.getGroupLeader().brain().blockingTurnActionInProgress();
 	}
 
 	private boolean isCombatPathDisabled() {
 		return overUIElement || !GameState.isPlayersTurn() || UIManager.isAnythingOpen()
 				|| group.getGroupLeader() == null || !group.getGroupLeader().isActive()
-				|| group.getGroupLeader().blockingTurnActionInProgress();
+				|| group.getGroupLeader().brain().blockingTurnActionInProgress();
 	}
 
 	public TargetType getEffectTarget() {

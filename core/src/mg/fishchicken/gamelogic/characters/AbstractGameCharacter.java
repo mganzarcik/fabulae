@@ -1,13 +1,25 @@
 package mg.fishchicken.gamelogic.characters;
 
-import groovy.lang.Script;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.StringBuilder;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
+import box2dLight.Light;
+import box2dLight.ViewConeLight;
 import mg.fishchicken.audio.AudioProfile;
 import mg.fishchicken.audio.AudioTrack;
 import mg.fishchicken.audio.EmptyTrack;
@@ -54,20 +66,6 @@ import mg.fishchicken.graphics.models.CharacterModel;
 import mg.fishchicken.graphics.renderers.GameMapRenderer;
 import mg.fishchicken.pathfinding.Path;
 import mg.fishchicken.pathfinding.Path.Step;
-import box2dLight.Light;
-import box2dLight.ViewConeLight;
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.ObjectMap.Entry;
-import com.badlogic.gdx.utils.ObjectSet;
-import com.badlogic.gdx.utils.StringBuilder;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 public abstract class AbstractGameCharacter extends AnimatedGameObject implements AssetContainer, FactionContainer,
 		OrientedThing {
@@ -104,7 +102,6 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	private String s_name;
 	private String s_description;
 	private Faction s_faction;
-	private boolean s_aiDisabled;
 	private boolean s_noCircle;
 	private boolean s_sightDisabled;
 	private ObjectMap<Faction, Pair<GameCalendarDate, Integer>> temporaryHostility;
@@ -114,6 +111,7 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	
 	// non state properties
 	protected CharacterAnimationMap animations;
+	private Brain brain;
 	private LineOfSight lineOfSight;
 	private ViewConeLight viewCone;
 	private int[] visibleTilesLookup;
@@ -123,10 +121,6 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	private CharacterCircle characterCircle, destinationIndicator;
 	private Array<LightDescriptor> lightDescriptors;
 	private ObjectMap<LightDescriptor, Light> lights;
-	private AIScriptPackage aiScript;
-	private AIScriptPackage aiScriptBackUp;
-	private Action currentTurnAction;
-	private Action currentAIAction;
 	private Tile lastKnownEnemyPosition;
 	protected ObjectSet<AbstractGameCharacter> tempSet;
 	private Position tempPosition;
@@ -166,6 +160,11 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 		setPlayingAnimation(true);
 		tempSet = new ObjectSet<AbstractGameCharacter>();
 		tempPosition = new Position();
+		brain = createBrain();
+	}
+	
+	protected Brain createBrain() {
+		return new Brain(this);
 	}
 	
 	@Override
@@ -287,9 +286,8 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 				}
 			}
 			
-			if (!GameState.isCombatInProgress()) {
-				determineNextAIAction();
-			}
+			
+			brain.update(deltaTime);
 			updateTemporaryHostility();
 		}
 		
@@ -382,10 +380,9 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	 * @param timeToStayHostile - number of hours to stay hostile
 	 */
 	public void makeTemporarilyHostileTowards(Faction faction, int timeToStayHostile) {
-		if (getFaction().isHostileTowards(faction)) {
-			return;
+		if (!getFaction().isHostileTowards(faction)) {
+			temporaryHostility.put(faction, new Pair<GameCalendarDate, Integer>(new GameCalendarDate(GameState.getCurrentGameDate()), timeToStayHostile));
 		}
-		temporaryHostility.put(faction, new Pair<GameCalendarDate, Integer>(new GameCalendarDate(GameState.getCurrentGameDate()), timeToStayHostile));
 		resetCharacterCircleColor();
 	}
 	
@@ -667,36 +664,6 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 		return hasEnemiesInSight();
 	}
 	
-	protected void determineNextAIAction() {
-		if (!s_aiDisabled && aiScript != null && currentAIAction == null) {
-			currentAIAction  = aiScript.run(this);
-			if (currentAIAction != null) {
-				addAction(currentAIAction, false);
-			}
-		}
-	}
-	
-	/**
-	 * Disables the AI script of this character, immediately
-	 * stopping any AI action currently in progress.
-	 */
-	public void disableAI() {
-		s_aiDisabled = true;
-		if (currentAIAction != null) {
-			removeAction(currentAIAction);
-			
-		}
-	}
-	
-	/**
-	 * Enabled the AI script of this character.
-	 * 
-	 * @see #disableAI()
-	 */
-	public void enableAI() {
-		s_aiDisabled = false;
-	}
-	
 	private void createLights(GameMap map) {
 		if (map == null || map.isDisposed())  {
 			return;
@@ -885,37 +852,13 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	@Override
 	public void removeAllActions() {
 		super.removeAllActions();
-		removeCurrentTurnAction();
+		brain.removeActions();
 	}
 	
 	@Override
 	public void removeAction(Action a) {
-		if (a != null && a.equals(currentAIAction)) {
-			currentAIAction = null;
-		}
+		brain.removeAction(a);
 		super.removeAction(a);
-	}
-	
-	public void updateTurnAction(float deltaTime) {
-		if (currentTurnAction != null) {
-			currentTurnAction.update(deltaTime);
-			if (currentTurnAction.isFinished()) {
-				currentTurnAction.onRemove(this);
-				currentTurnAction = null;
-			}
-		} else {
-			setNextTurnAction();
-		}
-	}
-
-	/**
-	 * Returns true if this character currently has a combat action in progress
-	 * that should block any other action from being assigned to him.
-	 * 
-	 * @return
-	 */
-	public boolean blockingTurnActionInProgress() {
-		return currentTurnAction != null && !currentTurnAction.isBlockingInCombat();
 	}
 	
 	public float getCircleOffsetX() {
@@ -971,10 +914,7 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 		setAnimation(null);
 		recalculateOffsets();
 	}
-	
-	public void setAudioProfile() {
-	}
-	
+
 	public CharacterModel getModel() {
 		return s_model;
 	}
@@ -1424,81 +1364,6 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 		}
 		return true;
 	}
-
-	private boolean hasNextTurnAction() {
-		if (aiScript == null) {
-			return false;
-		}
-		Action action = aiScript.run(this);
-		return action != null && !action.isFinished() && canPerformAction(action.getClass());
-	}
-	
-	private void setNextTurnAction() {
-		if (aiScript == null) {
-			currentTurnAction = null;
-			return;
-		}
-		currentTurnAction= aiScript.run(this);
-		if (currentTurnAction != null && !canPerformAction(currentTurnAction.getClass())) {
-			currentTurnAction = null;
-		}
-	}
-	
-	public boolean finishedTurn() {
-		if (currentTurnAction == null && !hasNextTurnAction()) {
-			return true;
-		}
-		return false;
-	}
-	
-	protected void removeCurrentTurnAction() {
-		if (currentTurnAction != null) {
-			currentTurnAction.onRemove(this);
-			currentTurnAction = null;
-		}
-	}
-	
-	/**
-	 * Gets the current AIScript of this character.
-	 * 
-	 */
-	public AIScriptPackage getAIScript() {
-		return aiScript;
-	}
-	
-	/**
-	 * This replaces the character's defined AIScript with a new one.
-	 * This action is irreversible and the old script will not be restorable.
-	 * If you want to temporarily replace an AI script, call setOverrideAIScript()
-	 * {@link #setOverrideAIScript()}.
-	 * 
-	 * @param newAIScript
-	 */
-	public void setAIScript(AIScriptPackage newAIScript) {
-		aiScript = newAIScript;
-		aiScriptBackUp = newAIScript;
-	}
-	
-	/**
-	 * This replaces the character's defined AIScript with a new one.
-	 * If you wish to restore the original AI script the character was
-	 * loaded with, just call restoreAIScript.
-	 * {@link #restoreAIScript()}.
-	 * 
-	 * @param newAIScript
-	 */
-	public void setOverrideAIScript(AIScriptPackage newAIScript) {
-		aiScript = newAIScript;
-	}
-	
-	/**
-	 * Restores the original, XML master data defined AI Script 
-	 * of this character in case it was replaced by calling 
-	 * {@link #setOverrideAIScript(Script)}.
-	 */
-	public void restoreAIScript() {
-		aiScript = aiScriptBackUp;
-	}
 	
 	@Override
 	public void gatherAssets(AssetMap assetStore) {
@@ -1528,6 +1393,10 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	@Override
 	public float getProjectileOriginYOffset() {
 		return s_model != null ? s_model.getProjectileOriginYOffset() : super.getProjectileOriginYOffset();
+	}
+	
+	public Brain brain() {
+		return brain;
 	}
 	
 	@Override
@@ -1562,22 +1431,7 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 		characterCircle.setColor(ColorUtil.WHITE_FIFTY);
 		destinationIndicator.setColor(ColorUtil.WHITE_FIFTY);
 		
-		Element currentAIActionElement = root.getChildByName(XML_CURRENT_AI_ACTION);
-		if (currentAIActionElement != null && currentAIActionElement.getChildCount() > 0) {
-			currentAIAction = Action.readFromXML(currentAIActionElement.getChild(0), this);
-			addAction(currentAIAction, false);
-		}
-		
-		if (root.getChildByName(AIScriptPackage.XML_AI) != null) {
-			aiScript = new AIScriptPackage(root);
-		}
-		
-		Element aiBackup = root.getChildByName(XML_AI_BACKUP);
-		if (aiBackup != null) {
-			aiScriptBackUp = new AIScriptPackage(aiBackup);
-		} else {
-			aiScriptBackUp = aiScript;
-		}
+		brain.loadFromXML(root);
 		
 		getFaction().addMember(this);
 		
@@ -1608,22 +1462,7 @@ public abstract class AbstractGameCharacter extends AnimatedGameObject implement
 	public void writeToXML(XmlWriter writer) throws IOException {
 		super.writeToXML(writer);
 		
-		if (currentAIAction != null) {
-			writer.element(XML_CURRENT_AI_ACTION);
-			currentAIAction.writeToXML(writer);
-			writer.pop();
-		}	
-		
-		if (aiScript != null) {
-			aiScript.writeToXML(writer);
-		}
-		
-		if (aiScriptBackUp != null) {
-			writer.element(XML_AI_BACKUP);
-			aiScriptBackUp.writeToXML(writer);
-			writer.pop();
-		}
-		
+		brain.writeToXML(writer);
 		
 		if (temporaryHostility.size > 0) {
 			writer.element(XML_TEMPORARY_HOSTILITY);
