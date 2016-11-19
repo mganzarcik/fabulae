@@ -1,5 +1,16 @@
 package mg.fishchicken.ui.toolbar;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.IntMap;
+
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.i18n.Strings;
 import mg.fishchicken.core.input.tools.Tool;
@@ -17,29 +28,15 @@ import mg.fishchicken.ui.inventory.InventoryItemButton.InventoryItemButtonStyle;
 import mg.fishchicken.ui.tooltips.SimpleTooltip;
 import mg.fishchicken.ui.tooltips.SimpleTooltip.SimpleTooltipStyle;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.IntMap;
-import com.badlogic.gdx.utils.IntMap.Entry;
-
 public class CharacterToolbar extends Table implements EventListener {
 
 	private SimpleTooltip tooltip;
 	private CharacterToolbarStyle style;
 	private GameState gameState;
-	private Button combatButton, inventoryButton, characterSheetButton,
+	private Button attackButton, inventoryButton, characterSheetButton,
 			activeEffectsButton, journalButton, formationEditorButton,
 			campButton, usePerkButton, spellbookButton, stealthButton,
-			lockpickButton, detectTrapsButton, disarmTrapsButton;
-	private Cell<?> startCombatButtonCell;
+			lockpickButton, detectTrapsButton, disarmTrapsButton, talkToButton;
 	private boolean ignoreEvent;
 	private Table quickUseButtons;
 	private PlayerCharacterGroup group;
@@ -59,20 +56,24 @@ public class CharacterToolbar extends Table implements EventListener {
 	}
 	public void loadTools() {
 		ignoreEvent = false;
-		combatButton = addButton(Strings.getString(UIManager.STRING_TABLE, "combatButton"), style.combatButtonStyle);
+		// screens
 		inventoryButton = addButton(Strings.getString(UIManager.STRING_TABLE, "inventoryButton"), style.inventoryButtonStyle);
 		characterSheetButton = addButton(Strings.getString(UIManager.STRING_TABLE, "characterSheetButton"), style.characterSheetButtonStyle);
 		activeEffectsButton = addButton(Strings.getString(UIManager.STRING_TABLE, "activeEffectsButton"), style.activeEffectsButtonStyle);
 		journalButton = addButton(Strings.getString(UIManager.STRING_TABLE, "journalButton"), style.journalButtonStyle);
 		formationEditorButton = addButton(Strings.getString(UIManager.STRING_TABLE, "formationEditorButton"), style.formationEditorButtonStyle);
+		// rest
 		campButton = addButton(Strings.getString(UIManager.STRING_TABLE, "campButton"), style.campButtonStyle);
+		// actions
 		usePerkButton = addButton(Strings.getString(UIManager.STRING_TABLE, "usePerkButton"), style.usePerkButtonStyle);
 		spellbookButton = addButton(Strings.getString(UIManager.STRING_TABLE, "spellbookButton"), style.spellbookButtonStyle);
+		attackButton = addButton(Strings.getString(UIManager.STRING_TABLE, "attackButton"), style.attackButtonStyle);
+		talkToButton = addButton(Strings.getString(UIManager.STRING_TABLE, "talkToButton"), style.talkToButtonStyle);
 		stealthButton = addButton(Strings.getString(UIManager.STRING_TABLE, "stealthButton"), style.stealthButtonStyle);
 		lockpickButton = addButton(Strings.getString(UIManager.STRING_TABLE, "lockpickButton"), style.lockpickButtonStyle);
 		disarmTrapsButton = addButton(Strings.getString(UIManager.STRING_TABLE, "disarmButton"), style.disarmButtonStyle);
 		detectTrapsButton = addButton(Strings.getString(UIManager.STRING_TABLE, "detectTrapsButton"), style.detectTrapsButtonStyle);
-		startCombatButtonCell = getCell(combatButton);
+		
 		quickUseButtons = new Table();
 		if (style.inRows) {
 			row();
@@ -97,7 +98,7 @@ public class CharacterToolbar extends Table implements EventListener {
 			
 			quickUseButtons.clearChildren();
 			
-			for (Entry<InventoryItem> item : quickUseItems) {
+			for (IntMap.Entry<InventoryItem> item : quickUseItems) {
 				QuickUseButton button = new QuickUseButton(
 						style.quickSlotStyle, item.key, inventory,
 						BagType.QUICKUSE);
@@ -136,20 +137,15 @@ public class CharacterToolbar extends Table implements EventListener {
 		}
 		boolean isLocalMap = !map.isWorldMap();
 		
+		attackButton.setVisible(isLocalMap);
+		talkToButton.setVisible(isLocalMap);
 		stealthButton.setVisible(isLocalMap);
 		lockpickButton.setVisible(isLocalMap);
 		detectTrapsButton.setVisible(isLocalMap);
 		disarmTrapsButton.setVisible(isLocalMap);
 		quickUseButtons.setVisible(isLocalMap);
 		
-		if (!isLocalMap) {
-			startCombatButtonCell.setActor(null);
-		} else {
-			startCombatButtonCell.setActor(combatButton).pad(style.toolGap/2);
-		}
-		
 		ignoreEvent = true;
-		combatButton.setChecked(GameState.isCombatInProgress());
 		inventoryButton.setChecked(UIManager.isInventoryScreenOpen());
 		characterSheetButton.setChecked(UIManager.isPerksScreenOpen());
 		activeEffectsButton.setChecked(UIManager.isActiveEffectsScreenOpen());
@@ -160,8 +156,11 @@ public class CharacterToolbar extends Table implements EventListener {
 		spellbookButton.setChecked(UIManager.isSpellbookScreenOpen());
 		stealthButton.setChecked(GameState.isAnySelectedPCSneaking());
 		detectTrapsButton.setChecked(group.isAnySelectedPCDetectingTraps());
-		lockpickButton.setChecked(Tool.LOCKPICK == gameState.getPlayerCharacterController().getActiveTool());
-		disarmTrapsButton.setChecked(Tool.DISARM == gameState.getPlayerCharacterController().getActiveTool());
+		Tool activeTool = gameState.getPlayerCharacterController().getActiveTool();
+		lockpickButton.setChecked(Tool.LOCKPICK == activeTool);
+		disarmTrapsButton.setChecked(Tool.DISARM == activeTool);
+		attackButton.setChecked(Tool.ATTACK == activeTool);
+		talkToButton.setChecked(Tool.TALKTO == activeTool);
 		rebuildQuickUseButtons();
 		ignoreEvent = false;
 		
@@ -203,12 +202,14 @@ public class CharacterToolbar extends Table implements EventListener {
 					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "lockpickTooltip"));
 				} else if (disarmTrapsButton.isAscendantOf(target)) {
 					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "disarmTooltip"));
-				}else if (detectTrapsButton.isAscendantOf(target)) {
+				} else if (detectTrapsButton.isAscendantOf(target)) {
 					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "detectTrapsTooltip"));
-				} else if (combatButton.isAscendantOf(target)) {
-					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "startCombatTooltip"));
 				} else if (formationEditorButton.isAscendantOf(target)) {
 					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "formationEditorTooltip"));
+				} else if (attackButton.isAscendantOf(target)) {
+					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "attackTooltip"));
+				} else if (talkToButton.isAscendantOf(target)) {
+					tooltip.setText(Strings.getString(UIManager.STRING_TABLE, "talkToTooltip"));
 				}
 				UIManager.setToolTip(tooltip);
 			} else if (Type.exit.equals(inputEvent.getType())) {
@@ -238,15 +239,17 @@ public class CharacterToolbar extends Table implements EventListener {
 			gameState.toggleStealth();
 		} else if (lockpickButton == actor) {
 			gameState.getPlayerCharacterController().toggleTool(Tool.LOCKPICK);
-		} else if (combatButton == actor) {
-			gameState.startCombat();
 		} else if (detectTrapsButton == actor) {
 			group.toggleDetectTraps();
 		} else if (disarmTrapsButton == actor) {
 			gameState.getPlayerCharacterController().toggleTool(Tool.DISARM);
 		} else if (formationEditorButton == actor) {
 			UIManager.toggleFormationEditor();
-		} 
+		} else if (attackButton == actor) {
+			gameState.getPlayerCharacterController().toggleTool(Tool.ATTACK);
+		}else if (talkToButton == actor) {
+			gameState.getPlayerCharacterController().toggleTool(Tool.TALKTO);
+		}
 		return true;		
 	}
 
@@ -254,12 +257,12 @@ public class CharacterToolbar extends Table implements EventListener {
 		private float x, y, toolGap;
 		private boolean inRows;
 		private SimpleTooltipStyle tooltipStyle;
-		private TextButtonWithSoundStyle combatButtonStyle,
+		private TextButtonWithSoundStyle attackButtonStyle,
 				inventoryButtonStyle, characterSheetButtonStyle,
 				activeEffectsButtonStyle, journalButtonStyle,
 				formationEditorButtonStyle, campButtonStyle,
 				usePerkButtonStyle, spellbookButtonStyle, stealthButtonStyle,
-				lockpickButtonStyle, disarmButtonStyle, detectTrapsButtonStyle;
+				lockpickButtonStyle, disarmButtonStyle, detectTrapsButtonStyle, talkToButtonStyle;
 		private InventoryItemButtonStyle quickSlotStyle;
 		private int quickSlotWidth, quickSlotHeight, quickUseGap;
 	}

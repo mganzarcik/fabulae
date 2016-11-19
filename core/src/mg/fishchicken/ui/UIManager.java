@@ -2,6 +2,32 @@ package mg.fishchicken.ui;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.assets.Assets;
 import mg.fishchicken.core.configuration.Configuration;
@@ -83,32 +109,6 @@ import mg.fishchicken.ui.storysequence.StorySequencePanelLoader;
 import mg.fishchicken.ui.toolbar.CharacterToolbar;
 import mg.fishchicken.ui.toolbar.CharacterToolbar.CharacterToolbarStyle;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.utils.ObjectMap;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
 public class UIManager {
 	
 	public static final String STRING_TABLE = "generalUI."+Strings.RESOURCE_FILE_EXTENSION;
@@ -169,7 +169,8 @@ public class UIManager {
 	private static LoadingIndicatorStyle loadingStyle;
 	private static Skin skin;
 	
-	private static Cursor defaultCursor, lockpickCursor, disarmCursor;
+	private static Cursor defaultCursor;
+	private static ObjectMap<Tool, Cursor> toolCursors;
 	
 	private static SpriteBatch batch;
 		
@@ -183,6 +184,7 @@ public class UIManager {
 		floatingTextFont = skin.getFont("floatingText");
 		loadingFont = skin.getFont("loading");
 		batch = new SpriteBatch();
+		toolCursors = new ObjectMap<Tool, Cursor>();
 		buildCursors(Assets.getAssetManager());
 		
 		stage.addListener(new EventListener() {
@@ -1459,31 +1461,29 @@ public class UIManager {
 	}
 	
 	public static void setCursorForTool(Tool tool) {
-		Cursor cursor = defaultCursor;
-		if (tool == Tool.LOCKPICK) {
-			cursor = lockpickCursor;
-		} else if (tool == Tool.DISARM) {
-			cursor = disarmCursor;
-		}
-		Gdx.graphics.setCursor(cursor);
+		Cursor cursor = tool != null ? toolCursors.get(tool) : null;
+		Gdx.graphics.setCursor(cursor != null ? cursor : defaultCursor);
 	}
 	
 	private static void buildCursors(AssetManager am) {
-		defaultCursor = Gdx.graphics.newCursor(getCursorPixmapForPath(am, Configuration.getDefaultCursorPath()), 0, 0);
-		disarmCursor = Gdx.graphics.newCursor(getCursorPixmapForPath(am, Configuration.getDisarmCursorPath()), 0, 0);
-		lockpickCursor = Gdx.graphics.newCursor(getCursorPixmapForPath(am, Configuration.getLockpickCursorPath()), 0, 0);
+		defaultCursor = getCursorForPath(am, Configuration.getDefaultCursorPath());
+		toolCursors.put(Tool.DISARM, getCursorForPath(am, Configuration.getDisarmCursorPath()));
+		toolCursors.put(Tool.LOCKPICK, getCursorForPath(am, Configuration.getLockpickCursorPath()));
+		toolCursors.put(Tool.ATTACK, getCursorForPath(am, Configuration.getAttackCursorPath()));
+		toolCursors.put(Tool.TALKTO, getCursorForPath(am, Configuration.getTalkToCursorPath()));
 	}
 	
-	private static Pixmap getCursorPixmapForPath(AssetManager am, String texturePath) {
+	private static Cursor getCursorForPath(AssetManager am, String texturePath) {
+		Pixmap pixmap = null;
 		if (texturePath != null) {
 			Texture cursorTexture = am.get(texturePath);
 			TextureData data = cursorTexture.getTextureData();
 			if (!data.isPrepared()) {
 				data.prepare();
 			}
-			return data.consumePixmap();
+			pixmap = data.consumePixmap();
 		}
-		return null;
+		return Gdx.graphics.newCursor(pixmap, 0, 0);
 	}
 	
 	public static void resetUI() {
@@ -1514,13 +1514,12 @@ public class UIManager {
 			defaultCursor.dispose();
 			defaultCursor = null;
 		}
-		if (disarmCursor != null) {
-			disarmCursor.dispose();
-			disarmCursor = null;
-		}
-		if (lockpickCursor != null) {
-			lockpickCursor.dispose();
-			lockpickCursor = null;
+		
+		if (toolCursors != null) {
+			for (Cursor cursor : toolCursors.values()) {
+				cursor.dispose();
+			}
+			toolCursors.clear();
 		}
 	}
 	

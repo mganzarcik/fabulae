@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 import com.badlogic.gdx.utils.XmlWriter;
 
 import mg.fishchicken.core.GameObject;
+import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.logging.Log;
 import mg.fishchicken.core.logging.Log.LogType;
@@ -187,7 +188,9 @@ public class UsePerkAction extends AttackAction implements SkillCheckModifier  {
 				}
 			}
 		} else {
-			applyCost();
+			if (GameState.isCombatInProgress()) {
+				applyCost();
+			}
 			isFinished = true;
 		}
 	}
@@ -273,7 +276,9 @@ public class UsePerkAction extends AttackAction implements SkillCheckModifier  {
 			user.setState(State.CAST);
 		}
 		perk.executeEffects(user, effectTarget);
-		applyCost();
+		if (GameState.isCombatInProgress()) {
+			applyCost();
+		}
 		perkUseInProgress = true;
 		if (user.isSneaking() 
 				&& user.getAllCharactersInSightRadius(null, CharacterFilter.NOT_SAME_FACTION, CharacterFilter.AWAKE)

@@ -810,6 +810,9 @@ public class GameState implements VariableContainer {
 	}
 	
 	public void startCombat() {
+		if (isCombatInProgress()) {
+			return;
+		}
 		handleFastForwardInterrupt(InterruptReason.AMBUSH);
 		if (fastForwarding) {
 			return;

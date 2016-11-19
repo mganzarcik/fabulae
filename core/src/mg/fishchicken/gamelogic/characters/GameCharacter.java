@@ -37,6 +37,7 @@ import mg.fishchicken.core.util.MathUtil;
 import mg.fishchicken.core.util.Orientation;
 import mg.fishchicken.core.util.XMLUtil;
 import mg.fishchicken.gamelogic.actions.Action;
+import mg.fishchicken.gamelogic.actions.AttackAction;
 import mg.fishchicken.gamelogic.characters.groups.PlayerCharacterGroup;
 import mg.fishchicken.gamelogic.characters.perks.Perk;
 import mg.fishchicken.gamelogic.characters.perks.PerksContainer;
@@ -924,7 +925,11 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	}
 
 	public void onCombatStart() {
-		removeAllVerbActions();
+		if (isMemberOfPlayerGroup()) {
+			removeAllVerbActions(AttackAction.class);
+		} else {
+			removeAllVerbActions();
+		}
 		brain.onCombatStart();
 		
 		if (MathUtils.random(100) < s_chatter.getChanceToSay(ChatterType.COMBAT_STARTED, getCurrentLocations())) {

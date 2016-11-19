@@ -1,5 +1,18 @@
 package mg.fishchicken.core.input;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectSet;
+
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.PositionedThing;
@@ -14,7 +27,6 @@ import mg.fishchicken.core.util.MathUtil;
 import mg.fishchicken.core.util.Orientation;
 import mg.fishchicken.core.util.Pair;
 import mg.fishchicken.gamelogic.actions.Action;
-import mg.fishchicken.gamelogic.actions.AttackAction;
 import mg.fishchicken.gamelogic.actions.CastSpellAction;
 import mg.fishchicken.gamelogic.actions.FlickerAction;
 import mg.fishchicken.gamelogic.actions.MoveToAction;
@@ -34,19 +46,6 @@ import mg.fishchicken.ui.UIManager;
 import mg.fishchicken.ui.dialog.OkCancelCallback;
 import mg.fishchicken.ui.saveload.SaveGameDetails;
 import mg.fishchicken.ui.tooltips.CombatTooltip;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectSet;
 
 public class PlayerCharacterController implements InputConsumer, EventListener {
 
@@ -277,6 +276,11 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 
 		if (shouldIgnoreTouchUp()) {
 			return false;
+		}
+		
+		if (activeTool != null && Buttons.RIGHT == button) {
+			toggleTool(activeTool);
+			return true;
 		}
 
 		if (UIManager.isCharacterScreenOpen()) {
@@ -558,9 +562,6 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 				if (MoveToAction.class.equals(actionClass)) {
 					group.moveTo((int) tileCoordinates.x, (int) tileCoordinates.y);
 				} else {
-					if (AttackAction.class.equals(actionClass) && !GameState.isCombatInProgress()) {
-						gameState.startCombat();
-					}
 					group.addAction(actionClass, actionTarget);
 				}
 				if (activeTool != null) {
@@ -598,7 +599,7 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 	}
 
 	private boolean handleCharacterSelection(GameObject clickedGameObject) {
-		if (clickedGameObject instanceof GameCharacter && group.containsCharacter((GameCharacter) clickedGameObject)) {
+		if (clickedGameObject instanceof GameCharacter && group.containsCharacter((GameCharacter) clickedGameObject) && activeTool == null) {
 			GameCharacter pc = (GameCharacter) clickedGameObject;
 			if (!isMultiSelectActive()) {
 				GameCharacter leader = group.getGroupLeader(true);

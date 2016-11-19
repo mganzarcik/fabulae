@@ -210,6 +210,10 @@ public final class Configuration implements XMLLoadable {
 	private String cursorDisarm = "ui/cursors/cursor_disarm.png";
 	@XMLField(fieldPath = "ui.cursors.lockpick")
 	private String cursorLockpick = "ui/cursors/cursor_lockpick.png";
+	@XMLField(fieldPath = "ui.cursors.talkTo")
+	private String cursorTalkTo = "ui/cursors/cursor_talk_to.png";
+	@XMLField(fieldPath = "ui.cursors.attack")
+	private String cursorAttack = "ui/cursors/cursor_attack.png";
 
 	@XMLField(fieldPath = "graphics.fogColor")
 	private Color fogColor = new Color(0.7f, 0.7f, 0.7f, 1f);
@@ -633,6 +637,28 @@ public final class Configuration implements XMLLoadable {
 	public static String getDisarmCursorPath() {
 		return StringUtil.nullOrEmptyString(configuration.cursorDisarm) ? null : configuration.moduleFolder
 				+ configuration.cursorDisarm;
+	}
+	
+	/**
+	 * Gets the path to the file that contains the image of the talk to
+	 * mouse cursor. If null or empty, the system cursor will be used.
+	 * 
+	 * @return
+	 */
+	public static String getTalkToCursorPath() {
+		return StringUtil.nullOrEmptyString(configuration.cursorTalkTo) ? null : configuration.moduleFolder
+				+ configuration.cursorTalkTo;
+	}
+	
+	/**
+	 * Gets the path to the file that contains the image of the attack
+	 * mouse cursor. If null or empty, the system cursor will be used.
+	 * 
+	 * @return
+	 */
+	public static String getAttackCursorPath() {
+		return StringUtil.nullOrEmptyString(configuration.cursorAttack) ? null : configuration.moduleFolder
+				+ configuration.cursorAttack;
 	}
 
 	/**
@@ -1434,6 +1460,13 @@ public final class Configuration implements XMLLoadable {
 		if (getDisarmCursorPath() != null) {
 			globalAssets.put(getDisarmCursorPath(), Texture.class);
 		}
+		if (getAttackCursorPath() != null) {
+			globalAssets.put(getAttackCursorPath(), Texture.class);
+		}
+		if (getTalkToCursorPath() != null) {
+			globalAssets.put(getTalkToCursorPath(), Texture.class);
+		}
+		
 
 		for (AudioTrack<?> music : startMenuMusic) {
 			music.gatherAssets(globalAssets);

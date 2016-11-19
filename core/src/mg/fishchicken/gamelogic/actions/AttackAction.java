@@ -299,9 +299,12 @@ public class AttackAction extends MoveToAction implements OnProjectileHitCallbac
 	private void startAttack() {
 		// determine weapons once more, since our position might have changed since init
 		determineAttackingWeapons(character, targetPosition.getX(), targetPosition.getY(), attackingWeapons);
+		if (!GameState.isCombatInProgress()) {
+			gameState.startCombat();
+		}
 		totalAPCost = getAPCostToAttack();
 		if ((character.
-				stats().getAPAct() >= totalAPCost)
+				stats().getAPAct() >= totalAPCost || !GameState.isCombatInProgress())
 				&& (attackingWeapons.size > 0 || canAttackWithFists())) {
 			startedAttack = true;
 			character.setIsSneaking(false);

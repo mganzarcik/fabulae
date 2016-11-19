@@ -85,10 +85,11 @@ public class UsableGameObject extends AnimatedGameObject implements Lockable, Tr
 	
 	public static boolean shouldHighlightUsable(GameObject go, float x, float y) {
 		PlayerCharacterController controller = gameState.getPlayerCharacterController();
+		Tool activeTool = controller.getActiveTool();
 		return !UIManager.isAnythingOpen()
 				&& go.isActive()
-				&& (controller.shouldHighlightUsables() || (!controller
-						.onlyMoveActionAllowed() && go.contains(x, y)));
+				&& (controller.shouldHighlightUsables() || ((go.contains(x, y) && !controller
+						.onlyMoveActionAllowed()  && activeTool == null) || (activeTool != null && activeTool.isApplicableFor(go))));
 	}
 	
 	private String s_animationTextureFile;
@@ -314,16 +315,15 @@ public class UsableGameObject extends AnimatedGameObject implements Lockable, Tr
 
 	@Override
 	public Color getHighlightColor(float x, float y) {
-		Tool activeTool = gameState.getPlayerCharacterController().getActiveTool();
 		if (!isUsable()) {
 			return null;
 		}
+		Tool activeTool = gameState.getPlayerCharacterController().getActiveTool();
 		if (trap != null && trap.isDetected() && !trap.isDisarmed()) {
 			return Tool.DISARM == activeTool && contains(x, y) ? Color.GREEN : Color.RED;
 		}
 		
-		return shouldHighlightUsable(this, x, y) 
-					|| (lock.isLocked() && lock.isPickable() && Tool.LOCKPICK == activeTool) ? Color.WHITE : null;
+		return shouldHighlightUsable(this, x, y) ? Color.WHITE : null;
 	}
 	
 	@Override
@@ -651,18 +651,8 @@ public class UsableGameObject extends AnimatedGameObject implements Lockable, Tr
 		
 		PlayerCharacterController controller = gameState.getPlayerCharacterController();
 		Tool activeTool = controller.getActiveTool();
-		boolean renderPickableOnly = Tool.LOCKPICK == activeTool;
-		boolean isPickable = lock != null && lock.isLocked() && lock
-				.isPickable();
 		
-		if (renderPickableOnly && !isPickable) {
-			return false;
-		}
-		
-		boolean renderTrapsOnly = Tool.DISARM == activeTool;
-		boolean isTrapped = trap != null && trap.isDetected() && !trap.isDisarmed();
-		
-		if (renderTrapsOnly && !isTrapped) {
+		if (activeTool != null && !activeTool.isApplicableFor(this)) {
 			return false;
 		}
 

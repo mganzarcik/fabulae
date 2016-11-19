@@ -294,9 +294,10 @@ public abstract class GameObject implements ActionsContainer, VariableContainer,
 		}
 	}
 	
-	public void removeAllVerbActions() {
+	public void removeAllVerbActions(Class<?>... exceptions) {
+		Array<Class<?>> exceptionsArray = new Array<Class<?>>(exceptions);
 		for (Action a : actions) {
-			if (a.isVerbAction()) {
+			if (a.isVerbAction() && !exceptionsArray.contains(a.getClass(), false)) {
 				removeAction(a);
 			}
 		}

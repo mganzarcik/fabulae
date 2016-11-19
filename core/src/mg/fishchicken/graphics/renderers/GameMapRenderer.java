@@ -390,9 +390,9 @@ public abstract class GameMapRenderer implements Disposable {
 		shapeRenderer.setProjectionMatrix(map.getCamera().combined);
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.WHITE);
-		for (ShapeDrawer doorTransition : map.getShapeDrawers()) {
-			if (doorTransition.shouldDrawShape()) {
-				doorTransition.drawShape(shapeRenderer, deltaTime);
+		for (ShapeDrawer shapeDrawer : map.getShapeDrawers()) {
+			if (shapeDrawer.shouldDrawShape()) {
+				shapeDrawer.drawShape(shapeRenderer, deltaTime);
 			}
 		}
 		shapeRenderer.end();
