@@ -22,6 +22,10 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * <pre>
  * &lt;characterInParty character="characterId" /&gt;
  * </pre>
+ * 
+ * <pre>
+ * &lt;characterInParty targetObject = "__npcAtDialogue" /&gt;
+ * </pre>
  *   
  * @author annun
  *
@@ -32,13 +36,17 @@ public class CharacterInParty extends Condition {
 	
 	@Override
 	protected boolean evaluate(Object object, Binding parameters) {
-		return GameState.isMemberOfPlayerGroup(getParameter(XML_CHARACTER_ID));
+		String id = getParameter(XML_CHARACTER_ID);
+		if (id == null) {
+			id = ((GameObject)object).getId();
+		}
+		return GameState.isMemberOfPlayerGroup(id);
 	}
 
 	@Override
 	public void validateAndLoadFromXML(Element conditionElement) {
-		if (conditionElement.get(XML_CHARACTER_ID, null) == null) {
-			throw new GdxRuntimeException(XML_CHARACTER_ID+" must be set for condition CharacterInParty in element: \n\n"+conditionElement);
+		if (conditionElement.get(XML_CHARACTER_ID, null) == null && conditionElement.get(PARAM_TARGET_OBJECT, null) == null) {
+			throw new GdxRuntimeException(XML_CHARACTER_ID+" or "+PARAM_TARGET_OBJECT+" must be set for condition CharacterInParty in element: \n\n"+conditionElement);
 		}
 	}
 	
@@ -52,16 +60,21 @@ public class CharacterInParty extends Condition {
 		try {
 			String id = getParameter(XML_CHARACTER_ID);
 			String name = null;
-			GameObject go = GameState.getGameObjectById(id);
-			if (go == null) {
-				// if the character has not been loaded yet, load it now,
-				// get the name and dispose of it
-				// this will probably incur a performance hit
-				go = GameCharacter.loadCharacter(id);
-				name = go.getName();
-				go.remove();
+			if (id != null) {
+				GameObject go = GameState.getGameObjectById(id);
+				if (go == null) {
+					// if the character has not been loaded yet, load it now,
+					// get the name and dispose of it
+					// this will probably incur a performance hit
+					go = GameCharacter.loadCharacter(id);
+					name = go.getName();
+					go.remove();
+				} else {
+					name = go.getName();
+				}
 			} else {
-				name = go.getName();
+				// TODO: this is not great, these should be localized, but this is a terrible edge case, so maybe later (yeah, right...)
+				name = getParameter(PARAM_TARGET_OBJECT);
 			}
 			return new Object[]{name};
 		} catch (IOException e) {

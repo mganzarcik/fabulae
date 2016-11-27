@@ -305,14 +305,14 @@ public class UsePerkAction extends AttackAction implements SkillCheckModifier  {
 		appliedModifiers.clear();
 	}
 	
-	protected void applyCost() {
+	private void applyCost() {
 		Stats stats = user.stats();
 		if (!useForNoAP) {
 			stats.addToAP(-perk.getApCost(user));
 		}
 		stats.addToHP(-perk.getHpCost());
 		stats.addToSP(-perk.getSpCost());
-		stats.addToMP(-perk.getMpCost());
+		stats.addToMP(-perk.getMpCost(user));
 	}
 	
 	@Override

@@ -124,6 +124,16 @@ public class Spell extends Perk {
 	}
 	
 	@Override
+	public int getApCost(GameCharacter character) {
+		return super.getApCost(character) + character.stats().getAPCostToSpellModifier();
+	}
+	
+	@Override
+	public int getMpCost(GameCharacter character) {
+		return super.getMpCost(character) + character.stats().getMPCostToSpellModifier();
+	}
+	
+	@Override
 	public boolean canBeActivated(GameCharacter character) {
 		if (!super.canBeActivated(character)) {
 			return false;

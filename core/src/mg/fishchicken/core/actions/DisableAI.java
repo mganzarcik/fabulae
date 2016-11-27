@@ -14,6 +14,10 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * <pre>
  * &lt;disableAI character="characterId" /&gt;
  * </pre>
+ * 
+ * <pre>
+ * &lt;disableAI targetObject="__npcAtDialogue" /&gt;
+ * </pre>
  *   
  * @author annun
  *

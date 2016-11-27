@@ -208,7 +208,7 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 		return character.stats().getAPCostToAttackModified(s_ap);
 	}
 
-	public int getMpCost() {
+	public int getMpCost(GameCharacter character) {
 		return s_mp;
 	}
 
@@ -411,7 +411,7 @@ public class Perk implements XMLLoadable, ModifierContainer, EffectContainer, Ta
 			return false;
 		}
 		
-		if (getMpCost() > 0 && characterStats.getMPAct() < getMpCost()) {
+		if (getMpCost(character) > 0 && characterStats.getMPAct() < getMpCost(character)) {
 			return false;
 		}
 		

@@ -158,11 +158,11 @@ public class PerkTooltip extends CompositeTooltip {
 			fsb.setLength(0);
 		}
 		
-		if (perk.getMpCost() != 0) {
+		if (perk.getMpCost(character) != 0) {
 			fsb.append(Strings.getString(ModifiableStat.STRING_TABLE, "mana"));
 			fsb.append(": ");
-			fsb.append(Integer.toString(perk.getMpCost()));
-			addLine(fsb.toString(), character.stats().getMPAct() >= perk.getMpCost() ? style.reqsReachedStyle : style.reqsNotReachedStyle);
+			fsb.append(Integer.toString(perk.getMpCost(character)));
+			addLine(fsb.toString(), character.stats().getMPAct() >= perk.getMpCost(character) ? style.reqsReachedStyle : style.reqsNotReachedStyle);
 			fsb.setLength(0);
 		}
 		

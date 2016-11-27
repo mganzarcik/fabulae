@@ -34,6 +34,11 @@ public class MockAttackAction extends AttackAction {
 		return 0;
 	}
 	
+	@Override
+	protected boolean shouldStartCombat() {
+		return false;
+	}
+	
 	/**
 	 * Attacks the target with the supplied weapon.
 	 * 

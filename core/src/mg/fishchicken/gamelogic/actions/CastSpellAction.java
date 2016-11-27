@@ -2,6 +2,8 @@ package mg.fishchicken.gamelogic.actions;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.logging.Log;
 import mg.fishchicken.core.logging.Log.LogType;
@@ -10,9 +12,6 @@ import mg.fishchicken.gamelogic.characters.GameCharacter.Skill;
 import mg.fishchicken.gamelogic.characters.perks.Perk;
 import mg.fishchicken.gamelogic.effects.targets.TargetType;
 import mg.fishchicken.gamelogic.magic.Spell;
-import mg.fishchicken.gamestate.characters.Stats;
-
-import com.badlogic.gdx.utils.XmlWriter;
 
 public class CastSpellAction extends UsePerkAction {
 	
@@ -40,16 +39,6 @@ public class CastSpellAction extends UsePerkAction {
 	@Override
 	protected Perk getPerk(String id) {
 		return Spell.getSpell(id);
-	}
-	
-	protected void applyCost() {
-		Stats stats = user.stats();
-		if (!useForNoAP) {
-			stats.addToAP(-(perk.getApCost(user) - user.stats().getAPCostToSpellModifier()));
-		}
-		stats.addToHP(-perk.getHpCost());
-		stats.addToSP(-perk.getSpCost());
-		stats.addToMP(-(perk.getMpCost() - user.stats().getMPCostToSpellModifier()));
 	}
 	
 	@Override

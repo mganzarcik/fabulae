@@ -219,6 +219,12 @@ public class PlayerCharacterController implements InputConsumer, EventListener {
 		} else if (KeyBindings.LOCKPICK.is(keycode)) {
 			toggleTool(Tool.LOCKPICK);
 			return true;
+		} else if (KeyBindings.TALKTO.is(keycode)) {
+			toggleTool(Tool.TALKTO);
+			return true;
+		} else if (KeyBindings.ATTACK.is(keycode)) {
+			toggleTool(Tool.ATTACK);
+			return true;
 		} else if (KeyBindings.SELECT_ALL.is(keycode)) {
 			GameCharacter oldLeader = group.getGroupLeader(true);
 			group.selectAll();

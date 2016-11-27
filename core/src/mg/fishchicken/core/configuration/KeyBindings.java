@@ -38,7 +38,9 @@ public enum KeyBindings {
 	SNEAK,
 	DISARM,
 	DETECT,
-	LOCKPICK;
+	LOCKPICK,
+	ATTACK,
+	TALKTO;
 	
 	public static final String STRING_TABLE = "keyBindigs."+Strings.RESOURCE_FILE_EXTENSION;
 	
@@ -92,13 +94,17 @@ public enum KeyBindings {
 		keys.put(DISPLAY_MAP, new Array<Integer>(
 				new Integer[] { Input.Keys.M }));
 		keys.put(SNEAK, new Array<Integer>(
-				new Integer[] { Input.Keys.A }));
+				new Integer[] { Input.Keys.H }));
 		keys.put(DISARM, new Array<Integer>(
 				new Integer[] { Input.Keys.D }));
 		keys.put(DETECT, new Array<Integer>(
 				new Integer[] { Input.Keys.T }));
 		keys.put(LOCKPICK, new Array<Integer>(
 				new Integer[] { Input.Keys.L }));
+		keys.put(ATTACK, new Array<Integer>(
+				new Integer[] { Input.Keys.A }));
+		keys.put(TALKTO, new Array<Integer>(
+				new Integer[] { Input.Keys.Q }));
 	}
 	
 	public Array<Integer> getKeys() {

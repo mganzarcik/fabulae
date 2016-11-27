@@ -215,6 +215,10 @@ public class PlayerCharacterGroup extends CharacterGroup implements FoodAndWater
 		}
 		if (playerCharacters.removeValue(memberToRemove, false)) {
 			Log.logLocalized("characterLeft", LogType.CHARACTER, memberToRemove.getName());
+			// refresh the PC panel in case we are on a loaded map
+			if (gameState.getCurrentMap() != null && gameState.getCurrentMap().isMapLoaded()) {
+				UIManager.refreshPCPanel();
+			}
 		}
 		memberToRemove.resetCharacterCircleColor();
 	}

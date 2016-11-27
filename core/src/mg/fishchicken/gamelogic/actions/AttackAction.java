@@ -299,7 +299,7 @@ public class AttackAction extends MoveToAction implements OnProjectileHitCallbac
 	private void startAttack() {
 		// determine weapons once more, since our position might have changed since init
 		determineAttackingWeapons(character, targetPosition.getX(), targetPosition.getY(), attackingWeapons);
-		if (!GameState.isCombatInProgress()) {
+		if (shouldStartCombat()) {
 			gameState.startCombat();
 		}
 		totalAPCost = getAPCostToAttack();
@@ -319,6 +319,10 @@ public class AttackAction extends MoveToAction implements OnProjectileHitCallbac
 			startedAttack = true;
 			actionFinished = true;
 		}
+	}
+	
+	protected boolean shouldStartCombat() {
+		return !GameState.isCombatInProgress();
 	}
 	
 	protected int getAPCostToAttack() {
