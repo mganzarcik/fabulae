@@ -24,7 +24,8 @@ public enum Tool {
 		}
 		
 		public boolean isApplicableFor(PositionedThing clickedGO) {
-			return (clickedGO instanceof GameCharacter);
+			return (clickedGO instanceof GameCharacter)
+					&& GameState.getPlayerCharacterGroup().getGroupLeader() != clickedGO;
 		}
 	},
 	TALKTO {
