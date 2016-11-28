@@ -2,6 +2,11 @@ package mg.fishchicken.gamelogic.actions;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.configuration.Configuration;
 import mg.fishchicken.core.util.Orientation;
@@ -9,16 +14,10 @@ import mg.fishchicken.gamelogic.characters.AbstractGameCharacter;
 import mg.fishchicken.gamelogic.characters.AbstractGameCharacter.State;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
 import mg.fishchicken.gamelogic.locations.GameMap;
-import mg.fishchicken.gamestate.GameObjectPosition;
 import mg.fishchicken.gamestate.Position;
 import mg.fishchicken.gamestate.Tile;
 import mg.fishchicken.pathfinding.Path;
 import mg.fishchicken.pathfinding.Path.Step;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 /**
  * Moves the NonPlayerCharacter to the specified 
@@ -148,14 +147,8 @@ public class MoveToAction extends BasicAction {
 	public void update(float deltaTime) {
 		if (character != null && !isFinished) {
 			calculatePathIfRequired();
-			GameObjectPosition position = character.position();
-			if (position.isExactlyOnTile() && finishIfNoMoreSteps()) {
-				return;
-			}
-			
 			Step nextStep = path.getStep(pathIndex);
-			if (position.equals(nextStep.getX(), nextStep.getY())) {
-				
+			if (character.position().equals(nextStep.getX(), nextStep.getY())) {
 				previousX = nextStep.getX();
 				previousY =  nextStep.getY();
 				

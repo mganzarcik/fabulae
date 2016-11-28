@@ -240,21 +240,20 @@ public class IsometricGameMapRenderer extends GameMapRenderer {
 	public void renderGrid (int yMin, int yMax, int xMin, int xMax,
 			float halfTileWidth, float halfTileHeight, TiledMapTileLayer layer) {
 		spriteBatch.setColor(1, 1, 1, 0.3f);
+		TextureRegion texture = map.getGridTexture();
+		float width = map.getTileSizeX() * 2 * unitScaleX;
+		float height = map.getTileSizeY() * unitScaleY;
 		for (int row = yMax; row >= yMin; row--) {
 			for (int col = xMin; col <= xMax; col++) {
 				float x = (col * halfTileWidth) + (row * halfTileWidth);
 				float y = (row * halfTileHeight) - (col * halfTileHeight);
 
 				final TiledMapTileLayer.Cell cell = layer.getCell(col, row);
-				if (cell == null)
+				if (cell == null) {
 					continue;
-				final TiledMapTile tile = cell.getTile();
-				if (tile != null) {
-					if (map.shouldRenderTile(col, row)) {
-						spriteBatch.draw(map.getGridTexture(), x, y,
-								map.getTileSizeX() * 2 * unitScaleX,
-								map.getTileSizeY() * unitScaleY);
-					}
+				}
+				if (cell.getTile() != null && map.shouldRenderTile(col, row)) {
+					spriteBatch.draw(texture, x, y,width,height);
 				}
 			}
 		}

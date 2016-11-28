@@ -57,9 +57,9 @@ import mg.fishchicken.gamelogic.traps.TrapType;
 import mg.fishchicken.gamelogic.weather.WeatherManager.PrecipitationAmount;
 import mg.fishchicken.gamelogic.weather.WeatherProfile;
 import mg.fishchicken.gamestate.SaveablePolygon;
-import mg.fishchicken.graphics.ParticleEffectManager;
 import mg.fishchicken.graphics.lights.LightDescriptor;
 import mg.fishchicken.graphics.models.CharacterModel;
+import mg.fishchicken.graphics.particles.ParticleEffectManager;
 
 public class XMLUtil {
 	public static final String XML_ACTIONS = "actions";

@@ -29,6 +29,7 @@ import mg.fishchicken.core.util.GroovyUtil;
 import mg.fishchicken.core.util.StringUtil;
 import mg.fishchicken.core.util.XMLUtil;
 import mg.fishchicken.gamelogic.time.GameCalendarDate;
+import mg.fishchicken.graphics.particles.ParticleEffectDescriptor;
 
 /**
  * Effect is basically a Groovy script. Effects can be attached to
@@ -56,6 +57,7 @@ public class Effect implements XMLLoadable, ThingWithId {
 	public static final String XML_EFFECT = "effect";
 	public static final String XML_CONTAINER = "container";
 	public static final String XML_DURATION = "duration";
+	public static final String XML_INDICATOR = "indicator";
 	
 	public static final String USER = "user";
 	public static final String TARGET = "target";
@@ -65,17 +67,10 @@ public class Effect implements XMLLoadable, ThingWithId {
 	private String id;
 	@XMLField(fieldPath="description.text")
 	private String description  = null;
-	@XMLField(fieldPath="indicator.effectId")
-	private String indicator = null;
-	@XMLField(fieldPath="indicator.delay")
-	private float indicatorDelay = 0f;
-	@XMLField(fieldPath="indicator.xOffset")
-	private float indicatorXOffset = 0f;
-	@XMLField(fieldPath="indicator.yOffset")
-	private float indicatorYOffset = 0f;
 	@XMLField(fieldPath="visible")
 	private boolean isVisible;
 	private Array<String> types;
+	private ParticleEffectDescriptor indicator, indicatorNoDelay;
 	//private String s_onEndMessage;
 	private Script descriptionParamsScript = null;
 	private Script onHitScript = null;
@@ -175,6 +170,11 @@ public class Effect implements XMLLoadable, ThingWithId {
 		Element root = xmlReader.parse(file);
 		XMLUtil.handleImports(this, file, root);
 		XMLUtil.readPrimitiveMembers(this, root);
+		Element indicatorElement = root.getChildByName(XML_INDICATOR);
+		if (indicatorElement != null) {
+			indicator = new ParticleEffectDescriptor(indicatorElement);
+			indicatorNoDelay = new ParticleEffectDescriptor(indicator.getEffectId(), 0, indicator.getXOffset(), indicator.getYOffset());
+		}
 		onHitScript = XMLUtil.readScript(id, root.getChildByName(XML_ON_HIT), onHitScript);
 		durationScript = XMLUtil.readScript(id, root.getChildByName(XML_DURATION), durationScript);
 		onEndScript = XMLUtil.readScript(id, root.getChildByName(XML_ON_END), onEndScript);
@@ -366,7 +366,7 @@ public class Effect implements XMLLoadable, ThingWithId {
 			this.target = target;
 			getContext();
 			if (parentEffect.indicator != null && target.getMap() != null) {
-				target.getMap().getParticleEffectManager().attachParticleEffect(target, parentEffect.indicator,parentEffect.indicatorDelay, s_parentEffect.indicatorXOffset, s_parentEffect.indicatorYOffset);
+				target.getMap().getParticleEffectManager().attachParticleEffect(target, parentEffect.indicator);
 			}
 		}
 		
@@ -488,9 +488,9 @@ public class Effect implements XMLLoadable, ThingWithId {
 				return true;
 			}
 			
-			if (s_parentEffect.indicator != null && target.getMap() != null && target.getMap().getParticleEffectManager()
-					.getCount(target, s_parentEffect.indicator) < 1) {
-				target.getMap().getParticleEffectManager().attachParticleEffect(target, s_parentEffect.indicator,0, s_parentEffect.indicatorXOffset, s_parentEffect.indicatorYOffset);
+			if (s_parentEffect.indicatorNoDelay != null && target.getMap() != null && target.getMap().getParticleEffectManager()
+					.getCount(target, s_parentEffect.indicatorNoDelay.getEffectId()) < 1) {
+				target.getMap().getParticleEffectManager().attachParticleEffect(target, s_parentEffect.indicatorNoDelay);
 			}
 			
 			return false;
@@ -515,7 +515,7 @@ public class Effect implements XMLLoadable, ThingWithId {
 				s_parentEffect.onEndScript.run();
 			}
 			if (s_parentEffect.indicator != null && target.getMap() != null) {
-				target.getMap().getParticleEffectManager().kill(target, s_parentEffect.indicator);
+				target.getMap().getParticleEffectManager().kill(target, s_parentEffect.indicator.getEffectId());
 			}
 		}
 

@@ -1,4 +1,4 @@
-package mg.fishchicken.graphics;
+package mg.fishchicken.graphics.particles;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -11,6 +11,7 @@ import mg.fishchicken.core.util.GraphicsUtil;
 import mg.fishchicken.core.util.MathUtil;
 import mg.fishchicken.gamelogic.locations.GameMap;
 import mg.fishchicken.gamestate.Position;
+import mg.fishchicken.graphics.Drawable;
 import mg.fishchicken.graphics.renderers.GameMapRenderer;
 
 import com.badlogic.gdx.graphics.Color;
@@ -49,25 +50,27 @@ public class ParticleEffectManager {
 	}
 	
 	/**
-	 * Creates a new particle effect instance for the specified id, attaches it
-	 * to the supplied game object and starts it after the supplied delay. The
-	 * effect will update its position according to the GOs position, modified
-	 * by the supplied offset. 
+	 * Creates a new particle effect instance for the specified particle effect descriptor, attaches it
+	 * to the supplied game object and starts it (after delay, if any is specified in the descriptor). The
+	 * effect will update its position according to the GOs position. 
 	 * 
 	 * If the supplied GO is a Drawable, the effect will only be drawn if the GO
 	 * can be drawn.
 	 *  
 	 * @param go
-	 * @param effectId
+	 * @param pe
 	 * @param delay
 	 *            - the delay in seconds
 	 * @param xOffset
 	 * @param yOffset
 	 * @return
 	 */
-	public ParticleEffect attachParticleEffect(GameObject go, String effectId, float delay, float xOffset, float yOffset) {
-		ParticleEffect effect = getParticleEffect(effectId);
-		new ParticleEffectDrawable(effectId, effect, go, GraphicsUtil.transformOffsets(go.getMap(), new Vector2(xOffset, yOffset)), delay);
+	public ParticleEffect attachParticleEffect(GameObject go, ParticleEffectDescriptor pe) {
+		if (pe == null) {
+			return null;
+		}
+		ParticleEffect effect = getParticleEffect(pe.getEffectId());
+		new ParticleEffectDrawable(pe.getEffectId(), effect, go, GraphicsUtil.transformOffsets(go.getMap(), new Vector2(pe.getXOffset(), pe.getYOffset())), pe.getDelay());
 		return effect;
 	}
 	
@@ -145,6 +148,7 @@ public class ParticleEffectManager {
 		private Vector2 offset;
 		private float delay;
 		private boolean isStarted;
+		private GameMap map;
 		
 		private ParticleEffectDrawable(String id, ParticleEffect effect, GameObject target, Vector2 offset, float delay) {
 			effectId = id;
@@ -153,14 +157,15 @@ public class ParticleEffectManager {
 			this.offset = offset;
 			isStarted = false;
 			this.delay = delay;
-			gameObject.getMap().addDrawable(this);
+			this.map = gameObject.getMap();
+			map.addDrawable(this);
 			activeEffects.add(this);
 			updatePosition();
 		}
 		
 		private void remove() {
 			activeEffects.removeValue(this, false);
-			gameObject.getMap().removeDrawable(this);
+			map.removeDrawable(this);
 		}
 		
 		/**
@@ -188,7 +193,7 @@ public class ParticleEffectManager {
 		
 		private void updatePosition() {
 			Vector2 projectedCoordinates = gameObject.position().setVector2(MathUtil.getVector2());
-			gameObject.getMap().projectFromTiles(projectedCoordinates.add(offset.x, offset.y));
+			map.projectFromTiles(projectedCoordinates.add(offset.x, offset.y));
 			effect.setPosition(projectedCoordinates.x ,
 					projectedCoordinates.y);
 			MathUtil.freeVector2(projectedCoordinates);
@@ -250,7 +255,7 @@ public class ParticleEffectManager {
 
 		@Override
 		public GameMap getMap() {
-			return gameObject.getMap();
+			return map;
 		}
 
 		@Override

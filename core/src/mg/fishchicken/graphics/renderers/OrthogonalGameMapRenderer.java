@@ -95,7 +95,7 @@ public class OrthogonalGameMapRenderer extends GameMapRenderer {
 		}
 		
 		if (renderGrid) {
-			renderGrid(yMin, yMax, xMin, xMax, xStart, layerTileWidth, layerTileHeight);
+			renderGrid(yMin, yMax, xMin, xMax, xStart, layerTileWidth, layerTileHeight, layer);
 		}
 	}
 	
@@ -221,22 +221,25 @@ public class OrthogonalGameMapRenderer extends GameMapRenderer {
 		spriteBatch.draw(region.getTexture(), vertices, 0, 20);
 	}
 	
-	public void renderGrid (int row1, int row2, int col1, int col2, float xStart, float tileWidth, float tileHeight) {
+	public void renderGrid (int row1, int row2, int col1, int col2, float xStart, float tileWidth, float tileHeight, TiledMapTileLayer layer) {
 		spriteBatch.setColor(1, 1, 1, 0.3f);
 		if (xStart < 0) {
 			xStart = 0;
 		}
 		float xMax = map.getWidth();
 		float y = row1 * tileHeight;
+		TextureRegion texture = map.getGridTexture();
+		float width = map.getTileSizeX() * map.getScaleX();
+		float height = map.getTileSizeY() * map.getScaleY();
 		for (int row = row1; row < row2; row++) {
 			float x = xStart;
 			if (x < 0) {
 				x = 0;
 			}
 			for (int col = col1; col < col2 && x < xMax; col++) {
-				if (map.shouldRenderTile(col, row)) {
-					spriteBatch.draw(map.getGridTexture(),x,y, map.getTileSizeX()
-							* map.getScaleX(), map.getTileSizeY() * map.getScaleY());
+				final TiledMapTileLayer.Cell cell = layer.getCell(col, row);
+				if (cell != null && cell.getTile() != null && map.shouldRenderTile(col, row)) {
+					spriteBatch.draw(texture, x, y, width, height);
 				}
 				x += tileWidth;
 			}

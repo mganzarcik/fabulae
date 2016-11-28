@@ -121,10 +121,12 @@ public class WanderAction extends MoveToAction {
 		if (duration != DURATION_INFINITE) {
 			totalTime += deltaTime;
 		}
-		if (timeCounter < 1 || !noMoreSteps()) {
+		if (!noMoreSteps()) {
 			super.update(deltaTime);
-		}
-		else if (duration == DURATION_INFINITE || duration == DURATION_ONCE || duration > totalTime){
+		} else if (duration == DURATION_INFINITE || duration == DURATION_ONCE || duration > totalTime){
+			if (timeCounter < 1) {
+				return;
+			}
 			boolean resetTimeCounter = true;
 			// we move only if we rolled enough to beat the chance to move
 			// or if we are already walking (can happen after a game is loaded)

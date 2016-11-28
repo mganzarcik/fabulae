@@ -56,6 +56,17 @@ public enum CharacterFilter {
 			return character.getFaction().equals(me.getFaction());
 		}
 	},
+	
+	/**
+	 * Characters that do not have line of sight will be excluded.
+	 */
+	HAS_SIGHT {
+		@Override
+		public boolean shouldFilter(AbstractGameCharacter me,
+				AbstractGameCharacter character) {
+			return character.getLineOfSight() == null;
+		}
+	},
 	/**
 	 * Characters not in the Player faction will be excluded.
 	 */

@@ -9,21 +9,6 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Locale;
 
-import mg.fishchicken.audio.AudioTrack;
-import mg.fishchicken.audio.Music;
-import mg.fishchicken.core.assets.AssetMap;
-import mg.fishchicken.core.i18n.Strings;
-import mg.fishchicken.core.saveload.XMLField;
-import mg.fishchicken.core.saveload.XMLLoadable;
-import mg.fishchicken.core.util.StringUtil;
-import mg.fishchicken.core.util.XMLUtil;
-import mg.fishchicken.gamelogic.characters.groups.Formation;
-import mg.fishchicken.gamelogic.inventory.ItemPile;
-import mg.fishchicken.gamelogic.inventory.items.Armor.ArmorClass;
-import mg.fishchicken.gamelogic.modifiers.Modifier;
-import mg.fishchicken.gamelogic.modifiers.ModifierContainer;
-import mg.fishchicken.ui.configuration.LoadingScreens;
-
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -38,6 +23,22 @@ import com.badlogic.gdx.utils.StreamUtils;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.badlogic.gdx.utils.XmlWriter;
+
+import mg.fishchicken.audio.AudioTrack;
+import mg.fishchicken.audio.Music;
+import mg.fishchicken.core.assets.AssetMap;
+import mg.fishchicken.core.i18n.Strings;
+import mg.fishchicken.core.saveload.XMLField;
+import mg.fishchicken.core.saveload.XMLLoadable;
+import mg.fishchicken.core.util.StringUtil;
+import mg.fishchicken.core.util.XMLUtil;
+import mg.fishchicken.gamelogic.characters.groups.Formation;
+import mg.fishchicken.gamelogic.inventory.ItemPile;
+import mg.fishchicken.gamelogic.inventory.items.Armor.ArmorClass;
+import mg.fishchicken.gamelogic.modifiers.Modifier;
+import mg.fishchicken.gamelogic.modifiers.ModifierContainer;
+import mg.fishchicken.graphics.particles.ParticleEffectDescriptor;
+import mg.fishchicken.ui.configuration.LoadingScreens;
 
 public final class Configuration implements XMLLoadable {
 
@@ -57,6 +58,10 @@ public final class Configuration implements XMLLoadable {
 	public static final String XML_MEMBERS = "members";
 	public static final String XML_FORMATION = "formation";
 	public static final String XML_KEY_BINDINGS = "keyBindings";
+	public static final String XML_UI = "ui";
+	public static final String XML_INDICATORS = "indicators";
+	public static final String XML_DETECT = "detect";
+	public static final String XML_SNEAK = "sneak";
 
 	private static Configuration configuration;
 	private static ModifierContainer EMPTY_MODIFIERS = new ArmorModifiers();
@@ -214,6 +219,9 @@ public final class Configuration implements XMLLoadable {
 	private String cursorTalkTo = "ui/cursors/cursor_talk_to.png";
 	@XMLField(fieldPath = "ui.cursors.attack")
 	private String cursorAttack = "ui/cursors/cursor_attack.png";
+	
+	private ParticleEffectDescriptor detectTrapsIndicator = null;
+	private ParticleEffectDescriptor sneakIndicator = null;
 
 	@XMLField(fieldPath = "graphics.fogColor")
 	private Color fogColor = new Color(0.7f, 0.7f, 0.7f, 1f);
@@ -659,6 +667,22 @@ public final class Configuration implements XMLLoadable {
 	public static String getAttackCursorPath() {
 		return StringUtil.nullOrEmptyString(configuration.cursorAttack) ? null : configuration.moduleFolder
 				+ configuration.cursorAttack;
+	}
+	
+	/**
+	 * Returns the particle effect that should be used when a character is detecting traps.
+	 * @return
+	 */
+	public static ParticleEffectDescriptor getDetectTrapsParticleEffect() {
+		return configuration.detectTrapsIndicator;
+	}
+	
+	/**
+	 * Returns the particle effect that should be used when a character is sneaking.
+	 * @return
+	 */
+	public static ParticleEffectDescriptor getSneakParticleEffect() {
+		return configuration.sneakIndicator;
 	}
 
 	/**
@@ -1930,6 +1954,21 @@ public final class Configuration implements XMLLoadable {
 			}
 			if (groupElement.getChildByName(XML_FORMATION) != null) {
 				startFormation = new Formation(groupElement);
+			}
+		}
+		
+		Element uiElement = root.getChildByName(XML_UI);
+		if (uiElement != null) {
+			uiElement = uiElement.getChildByName(XML_INDICATORS);
+			if (uiElement != null) {
+				Element indicator = uiElement.getChildByName(XML_DETECT);
+				if (indicator != null) {
+					detectTrapsIndicator = new ParticleEffectDescriptor(indicator);
+				}
+				indicator = uiElement.getChildByName(XML_SNEAK);
+				if (indicator != null) {
+					sneakIndicator = new ParticleEffectDescriptor(indicator);
+				}
 			}
 		}
 

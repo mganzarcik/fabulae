@@ -77,6 +77,8 @@ import mg.fishchicken.graphics.TextDrawer;
 import mg.fishchicken.graphics.animations.Animation;
 import mg.fishchicken.graphics.animations.ItemAnimationMap;
 import mg.fishchicken.graphics.models.ItemModel;
+import mg.fishchicken.graphics.particles.ParticleEffectDescriptor;
+import mg.fishchicken.graphics.particles.ParticleEffectManager;
 import mg.fishchicken.graphics.renderers.FloatingTextRenderer;
 import mg.fishchicken.graphics.renderers.GameMapRenderer;
 import mg.fishchicken.ui.UIManager;
@@ -379,11 +381,11 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		if (isSneaking() && !isInvisible()) {
 			ObjectSet<AbstractGameCharacter> characters = new ObjectSet<AbstractGameCharacter>();
 			getMap().getAllObjectsInArea(characters, getVisibleArea(), AbstractGameCharacter.class);
-			Iterator<AbstractGameCharacter> itertor = characters.iterator();
-			while (itertor.hasNext()) {
-				AbstractGameCharacter character  = itertor.next();
-				if (this.getFaction().equals(character.getFaction())) {
-					itertor.remove();
+			Iterator<AbstractGameCharacter> iterator = characters.iterator();
+			while (iterator.hasNext()) {
+				AbstractGameCharacter character  = iterator.next();
+				if (this.getFaction().equals(character.getFaction()) || character.getLineOfSight() == null) {
+					iterator.remove();
 					continue;
 				}
 				if (character.getViewConeArea().contains((int)position.getX(), (int)position.getY())) {
@@ -411,6 +413,12 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 			}
 			
 		}
+	}
+	
+	@Override
+	public void setMap(GameMap map) {
+		super.setMap(map);
+		updateStatusIndicators();
 	}
 	
 	@Override
@@ -1239,12 +1247,39 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		
 		// recalculate animation speed
 		updateAnimationsSpeed();
-		
+		Log.logLocalized(value ? "startedDetectingTraps" : "stoppedDetectingTraps", LogType.CHARACTER, getName());
 		if (value) {
-			Log.logLocalized("startedDetectingTraps", LogType.CHARACTER, getName());
 			handleDetectTraps();
-		} else {
-			Log.logLocalized("stoppedDetectingTraps", LogType.CHARACTER, getName());
+		} 
+		updateStatusIndicators();
+	}
+	
+	private void updateStatusIndicators() {
+		if (getMap() == null) {
+			return;
+		}
+		ParticleEffectManager pem = getMap().getParticleEffectManager();
+		
+		ParticleEffectDescriptor pe = Configuration.getDetectTrapsParticleEffect();
+		if (pe != null) {
+			if (isDetectingTraps()) {
+				if (pem.getCount(this, pe.getEffectId()) < 1) {
+					pem.attachParticleEffect(this, pe);
+				}
+			} else {
+				pem.kill(this, pe.getEffectId());
+			}
+		}
+		
+		pe = Configuration.getSneakParticleEffect();
+		if (pe != null) {
+			if (isSneaking()) {
+				if (pem.getCount(this, pe.getEffectId()) < 1) {
+					pem.attachParticleEffect(this, pe);
+				}
+			} else {
+				pem.kill(this, pe.getEffectId());
+			}
 		}
 	}
 	
@@ -1258,7 +1293,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 			return;
 		}
 		tempSet.clear();
-		if (value && getAllCharactersInSightRadius(tempSet, CharacterFilter.NOT_SAME_FACTION)) {
+		if (value && getAllCharactersInSightRadius(tempSet, CharacterFilter.NOT_SAME_FACTION, CharacterFilter.HAS_SIGHT)) {
 			Log.logLocalized("cannotSneakOthersNearby", LogType.CHARACTER, getName());
 			return;
 		}
@@ -1281,6 +1316,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 				gameState.startCombat();
 			}
 		}
+		updateStatusIndicators();
 	}
 	
 	@Override

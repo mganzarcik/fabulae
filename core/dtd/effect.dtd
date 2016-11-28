@@ -1,10 +1,11 @@
 <!ELEMENT effect ( parameters?, description?, type?, visible?, indicator?, onHit?, duration?, condition?, persistent?, onEnd? ) >
 
-<!ELEMENT indicator ( effectId, delay?, xOffset?, yOffset? ) >
+<!ELEMENT indicator ( effectId, delay?, offset? ) >
 <!ELEMENT effectId  ( #PCDATA ) >
 <!ELEMENT delay  ( #PCDATA ) >
-<!ELEMENT xOffset  ( #PCDATA ) >
-<!ELEMENT yOffset  ( #PCDATA ) >
+<!ELEMENT offset  ( x, y ) >
+<!ELEMENT y ( #PCDATA ) >
+<!ELEMENT x ( #PCDATA ) >
 
 <!ELEMENT visible  ( #PCDATA ) >
 
