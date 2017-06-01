@@ -18,7 +18,7 @@ allprojects {
     version = '1.0'
     ext {
         appName = 'Fishchicken'
-        gdxVersion = '1.9.2'
+        gdxVersion = '1.9.6'
         roboVMVersion = '0.0.12'
     }
 
