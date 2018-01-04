@@ -448,6 +448,11 @@ public class GameMapLoader extends TiledMapLoader {
 			}
 		}
 
+		if (groundLayers.size < 1) {
+			throw new GdxRuntimeException(
+					"Map " + fileName + " does not contain any ground layers! Make sure to define at least one layer with property ground = true.");
+		}
+		
 		loadBlockedTiles();
 		calculateMoveCosts();
 

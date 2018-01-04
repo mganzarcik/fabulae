@@ -1,6 +1,7 @@
 package mg.fishchicken.core.conditions;
 
 import groovy.lang.Binding;
+import mg.fishchicken.core.i18n.Strings;
 import mg.fishchicken.core.util.StringUtil;
 
 import com.badlogic.gdx.utils.Array;
@@ -51,7 +52,9 @@ public class And extends Condition {
 		for (int i = 0; i < conditions.size; ++i) {
 			fsb.append(conditions.get(i).toNegatedUIString());
 			if (i != conditions.size-1) {
-				fsb.append(" or ");
+				fsb.append(" ");
+				fsb.append(Strings.getString(STRING_TABLE, "or"));
+				fsb.append(" ");
 			}
 		}
 		String returnValue = fsb.toString();

@@ -311,6 +311,11 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		}
 	}
 	
+	/**
+	 * 
+	 * @param duration
+	 * @see Survival#hasSlept(float, boolean, boolean)
+	 */
 	public void hasSlept(float duration) {
 		if (isActive()) {
 			boolean isPC = isMemberOfPlayerGroup();
