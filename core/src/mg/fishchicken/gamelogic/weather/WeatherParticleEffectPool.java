@@ -16,11 +16,11 @@
 
 package mg.fishchicken.gamelogic.weather;
 
-import mg.fishchicken.gamelogic.weather.WeatherParticleEffectPool.PooledWeatherEffect;
-
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.WeatherParticleEffect;
 import com.badlogic.gdx.utils.Pool;
+
+import mg.fishchicken.gamelogic.weather.WeatherParticleEffectPool.PooledWeatherEffect;
 
 public class WeatherParticleEffectPool extends Pool<PooledWeatherEffect> {
 	private final ParticleEffect effect;

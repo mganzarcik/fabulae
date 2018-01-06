@@ -1,7 +1,12 @@
 package mg.fishchicken.gamelogic.inventory.items;
 
-import java.io.IOException;
 import java.util.Locale;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.SerializationException;
+import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.XmlReader.Element;
 
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
@@ -12,11 +17,6 @@ import mg.fishchicken.core.util.XMLUtil;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
 import mg.fishchicken.gamelogic.factions.Faction;
 import mg.fishchicken.gamestate.ObservableState;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.XmlReader.Element;
 
 public class ItemOwner extends ObservableState<ItemOwner, ItemOwner.ItemOwnerParam> {
 	
@@ -158,7 +158,7 @@ public class ItemOwner extends ObservableState<ItemOwner, ItemOwner.ItemOwnerPar
 							XMLUtil.XML_PROPERTIES).get(
 							XMLUtil.XML_ATTRIBUTE_NAME);
 				}
-			} catch (IOException e) {
+			} catch (SerializationException e) {
 				throw new GdxRuntimeException("Could not determine the owner with type "+s_ownerCharacterId, e);
 			}
 			if (ownerCharacterName == null) {

@@ -75,7 +75,7 @@ public class GameOptionsPanel extends BorderedWindow {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible && !isVisible()) {
-			backScrollPane.scrollTo(0, backScrollPane.getWidget().getHeight()	, 1, 1);
+			backScrollPane.scrollTo(0, backScrollPane.getActor().getHeight()	, 1, 1);
 		}
 		super.setVisible(visible);
 	}

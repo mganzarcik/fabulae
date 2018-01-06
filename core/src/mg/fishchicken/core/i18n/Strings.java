@@ -24,7 +24,7 @@ public class Strings {
 	public static final String RESOURCE_STRING_KEY_SEPARATOR = "#";
 	private static final String RESOURCE_STRING_SEPARATOR = "."+RESOURCE_FILE_EXTENSION+RESOURCE_STRING_KEY_SEPARATOR;
 	private static final int RESOURCE_STRING_SEPARATOR_LENGTH = RESOURCE_STRING_SEPARATOR.length();
-	public static final String REPLACEMENT_STRING = "%s";
+
 	/**
 	 * Gathers all Strings and registers them in the AssetManager
 	 * so that they can be later loaded by the asset loader.

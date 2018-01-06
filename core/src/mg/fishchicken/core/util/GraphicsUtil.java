@@ -2,19 +2,21 @@ package mg.fishchicken.core.util;
 
 import java.util.Locale;
 
-import mg.fishchicken.gamelogic.locations.GameMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter.ScaledNumericValue;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter.SpawnShape;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.WeatherParticleEmitter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.StringBuilder;
+
+import mg.fishchicken.gamelogic.locations.GameMap;
 
 public class GraphicsUtil {
 	
@@ -54,9 +56,9 @@ public class GraphicsUtil {
 	 * of the emitters was modified
 	 * 
 	 */
-	public static float resize(Array<ParticleEmitter> emitters, float newSize) {
+	public static float resize(Array<WeatherParticleEmitter> emitters, float newSize) {
 		float scale = 0;
-		for (ParticleEmitter e : emitters) {
+		for (WeatherParticleEmitter e : emitters) {
 			scale = newSize / e.getSpawnWidth().getHighMax();
 			scale(e, scale, false, false);
 		}
@@ -64,7 +66,7 @@ public class GraphicsUtil {
 	}
 	
 	/**
-	 * Scales the supplied particle emmiters by multiplying the 
+	 * Scales the supplied particle emitters by multiplying the 
 	 * velocity and scale settings of all its emitters
 	 * by the supplied value.
 	 * 
@@ -76,9 +78,23 @@ public class GraphicsUtil {
 			scale(e, scale, isometric, scaleParticles);
 		}
 	}
+	
+	private static void scale(ScaledNumericValue value, float scale) {
+		float scaling = value.getHighMax();
+		value.setHighMax(scaling * scale);
+	    
+	    scaling = value.getHighMin();
+	    value.setHighMin(scaling * scale);
+
+	    scaling = value.getLowMax();
+	    value.setLowMax(scaling * scale);
+
+	    scaling = value.getLowMin();
+	    value.setLowMin(scaling * scale);
+	}
 
 	/**
-	 * Scales the supplied particle emmiters by multiplying the velocity and
+	 * Scales the supplied particle emitters by multiplying the velocity and
 	 * scale settings of all its emitters by the supplied value.
 	 * 
 	 * @param pe
@@ -93,73 +109,58 @@ public class GraphicsUtil {
 		float scaling;
 		
 		if (scaleParticles) {
-			scaling = emitter.getScale().getHighMax();
-		    emitter.getScale().setHighMax(scaling * scale);
-		    
-		    scaling = emitter.getScale().getHighMin();
-		    emitter.getScale().setHighMin(scaling * scale);
-	
-		    scaling = emitter.getScale().getLowMax();
-		    emitter.getScale().setLowMax(scaling * scale);
-	
-		    scaling = emitter.getScale().getLowMin();
-		    emitter.getScale().setLowMin(scaling * scale);
+			scale(emitter.getXScale(), scale);
+			scale(emitter.getYScale(), scale);
 		} else {
+			scale(emitter.getEmission(), scale);
+			
 			scaling = emitter.getMinParticleCount();
 			emitter.setMinParticleCount((int)(scaling*scale));
 			
 			scaling = emitter.getMaxParticleCount();
 			emitter.setMaxParticleCount((int)(scaling*scale));
-			
-			scaling = emitter.getEmission().getHighMax();
-			emitter.getEmission().setHighMax(scaling*scale);
-			
-			scaling = emitter.getEmission().getHighMin();
-			emitter.getEmission().setHighMin(scaling*scale);
-			
-			scaling = emitter.getEmission().getLowMax();
-			emitter.getEmission().setLowMax(scaling*scale);
-			 
-			scaling = emitter.getEmission().getLowMin();
-			emitter.getEmission().setLowMin(scaling*scale);
 		}
 	    if (scaleParticles || SpawnShape.point.equals(emitter.getSpawnShape().getShape()) ) {
-	    	scaling = emitter.getVelocity().getHighMax();
-		    emitter.getVelocity().setHighMax(scaling * scale);
-
-		    scaling = emitter.getVelocity().getHighMin();
-		    emitter.getVelocity().setHighMin(scaling * scale);
-
-		    scaling = emitter.getVelocity().getLowMax();
-		    emitter.getVelocity().setLowMax(scaling * scale); 
-		    
-		    scaling = emitter.getVelocity().getLowMin();
-		    emitter.getVelocity().setLowMin(scaling * scale);
+	    	scale(emitter.getVelocity(), scale);
 	    }
+	    
+	    scale(emitter.getSpawnHeight(), scale * (isometric ? 0.66f : 1f));
+	    scale(emitter.getSpawnWidth(), scale * (isometric ? 1.33f : 1f));
+	}
+	
+	/**
+	 * Scales the supplied particle emitters by multiplying the velocity and
+	 * scale settings of all its emitters by the supplied value.
+	 * 
+	 * @param pe
+	 * @param scale
+	 * @param scaleParticles
+	 *            if true, the particles themselves are scaled up to create a
+	 *            larger effect. If false, the particles remain the same size,
+	 *            but the emission rate and min / max particle counts are
+	 *            increased instead
+	 */
+	public static void scale(WeatherParticleEmitter emitter, float scale, boolean isometric, boolean scaleParticles) {
+		float scaling;
 		
-	    scaling = emitter.getSpawnHeight().getHighMax();
-	    emitter.getSpawnHeight().setHighMax(scaling * scale * (isometric ? 0.66f : 1f)); 
+		if (scaleParticles) {
+			scale(emitter.getXScale(), scale);
+			scale(emitter.getYScale(), scale);
+		} else {
+			scale(emitter.getEmission(), scale);
+			
+			scaling = emitter.getMinParticleCount();
+			emitter.setMinParticleCount((int)(scaling*scale));
+			
+			scaling = emitter.getMaxParticleCount();
+			emitter.setMaxParticleCount((int)(scaling*scale));
+		}
+	    if (scaleParticles || SpawnShape.point.equals(emitter.getSpawnShape().getShape()) ) {
+	    	scale(emitter.getVelocity(), scale);
+	    }
 	    
-	    scaling = emitter.getSpawnHeight().getHighMin();
-	    emitter.getSpawnHeight().setHighMin(scaling * scale * (isometric ? 0.66f : 1f)); 
-	    
-	    scaling = emitter.getSpawnHeight().getLowMax();
-	    emitter.getSpawnHeight().setLowMax(scaling * scale * (isometric ? 0.66f : 1f)); 
-	    
-	    scaling = emitter.getSpawnHeight().getLowMin();
-	    emitter.getSpawnHeight().setLowMin(scaling * scale * (isometric ? 0.66f : 1f)); 
-	    
-	    scaling = emitter.getSpawnWidth().getHighMax();
-	    emitter.getSpawnWidth().setHighMax(scaling * scale * (isometric ? 1.33f : 1f)); 
-	    
-	    scaling = emitter.getSpawnWidth().getHighMin();
-	    emitter.getSpawnWidth().setHighMin(scaling * scale * (isometric ? 1.33f : 1f)); 
-	    
-	    scaling = emitter.getSpawnWidth().getLowMax();
-	    emitter.getSpawnWidth().setLowMax(scaling * scale * (isometric ? 1.33f : 1f)); 
-	    
-	    scaling = emitter.getSpawnWidth().getLowMin();
-	    emitter.getSpawnWidth().setLowMin(scaling * scale * (isometric ? 1.33f : 1f)); 
+	    scale(emitter.getSpawnHeight(), scale * (isometric ? 0.66f : 1f));
+	    scale(emitter.getSpawnWidth(), scale * (isometric ? 1.33f : 1f));
 	}
 	
 	/**

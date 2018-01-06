@@ -23,6 +23,7 @@ import aurelienribon.tweenengine.TweenEquations;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.g2d.WeatherParticleEmitter;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader.Element;
@@ -101,9 +102,6 @@ public class Weather implements TweenCallback, XMLSaveable {
 			continuousSound.setLooping(true);
 		}
 		if (weatherEffect != null) {
-			for (ParticleEmitter emitter : weatherEffect.getEmitters()) {
-				emitter.setContinuous(true);
-			}
 			resizeFromCamera();
 			targetParticleCount = getMaxParticleCount();
 		}
@@ -188,7 +186,7 @@ public class Weather implements TweenCallback, XMLSaveable {
 	
 	private void setAttached(boolean value) {
 		if (weatherEffect != null) {
-			for (ParticleEmitter pe : weatherEffect.getEmitters()) {
+			for (WeatherParticleEmitter pe : weatherEffect.getEmitters()) {
 				pe.setAttached(value);
 			}
 		}
@@ -336,7 +334,7 @@ public class Weather implements TweenCallback, XMLSaveable {
 	
 	private void stopAllTweens() {
 		tweens = null;
-		for (ParticleEmitter pe : weatherEffect.getEmitters()) {
+		for (WeatherParticleEmitter pe : weatherEffect.getEmitters()) {
 			weatherManager.getTweenManager().killTarget(pe);
 		}
 	}
@@ -365,7 +363,7 @@ public class Weather implements TweenCallback, XMLSaveable {
 		stopAllTweens();
 		int i = 0;
 		tweens = new Tween[weatherEffect.getEmitters().size];
-		for (ParticleEmitter pe : weatherEffect.getEmitters()) {
+		for (WeatherParticleEmitter pe : weatherEffect.getEmitters()) {
 			tweens[i++] = Tween
 				.to(pe, WeatherParticleEmitterTweenAccessor.MAX_PARTICLE_COUNT, duration)
 				.ease(equation)
@@ -383,7 +381,7 @@ public class Weather implements TweenCallback, XMLSaveable {
 	
 	private void setMaxParticleCount(int count) {
 		if (weatherEffect != null) {
-			for (ParticleEmitter pe : weatherEffect.getEmitters()) {
+			for (WeatherParticleEmitter pe : weatherEffect.getEmitters()) {
 				pe.setMaxParticleCount(count);
 			}
 		}

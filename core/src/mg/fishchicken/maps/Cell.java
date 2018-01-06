@@ -53,7 +53,7 @@ public class Cell extends com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell{
 	 * 
 	 * @param tile
 	 */
-	public void setTile(TiledMapTile tile) {
+	public Cell setTile(TiledMapTile tile) {
 		super.setTile(tile);
 		animated = false;
 		if (tile instanceof AnimatedTile) {
@@ -65,5 +65,6 @@ public class Cell extends com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell{
 				stateTime = randomDelay;
 			}
 		}
+		return this;
 	}
 }

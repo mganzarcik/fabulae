@@ -1011,6 +1011,9 @@ public class GameMap extends GameLocation implements PathableTiledMap, Disposabl
 	 * @return
 	 */
 	public boolean shouldRenderTile(int x, int y) {
+		if (x < 0 || y < 0) {
+			return false;
+		}
 		return shouldRenderTile(x+y*getMapWidth());
 	}
 	
