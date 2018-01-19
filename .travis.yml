@@ -4,4 +4,4 @@ android:
     - build-tools-19.1.0
     - android-19
 jdk: oraclejdk8
-script: gradlew :desktop:build
+script: ./gradlew :desktop:build
