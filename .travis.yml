@@ -1,2 +1,4 @@
 language: java
-script: gradlew :desktop:build
+before_install:
+  - sudo apt-get install install android-sdk 
+  - export ANDROID_HOME=/usr/lib/android-sdk
