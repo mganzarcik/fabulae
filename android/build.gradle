@@ -13,13 +13,6 @@ android {
 
         instrumentTest.setRoot('tests')
     }
-    defaultConfig {
-        multiDexEnabled true
-    }
-    dexOptions {
-        incremental true
-        javaMaxHeapSize "4g"
-    }
 }
 
 // needed to add JNI shared libraries to APK when compiling on CLI
