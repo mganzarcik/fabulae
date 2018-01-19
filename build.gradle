@@ -50,6 +50,7 @@ project(":android") {
 
     dependencies {
         compile project(":core")
+	compile fileTree(dir: '../libs', include: '*.jar')
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -59,11 +60,11 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
+	natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
+	natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+	natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
+	natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+	natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
     }
 }
 
@@ -106,10 +107,9 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "org.codehaus.groovy:groovy-all:2.3.0"
-        compile "aurelienribon:tweenengine:6.3.3"
-		compile "aurelienribon:tweenengine:6.3.3:sources"
-		compile "com.opencsv:opencsv:3.3"
-		compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile fileTree(dir: '../libs', include: '*.jar')
+	compile "com.opencsv:opencsv:3.3"
+	compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
 }
 
