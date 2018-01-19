@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.4'
-        classpath 'com.android.tools.build:gradle:0.10+'
+        classpath 'com.android.tools.build:gradle:0.14+'
         classpath 'com.github.jtakakura:gradle-robovm-plugin:0.0.8'
     }
 }
@@ -51,6 +51,8 @@ project(":android") {
     dependencies {
         compile project(":core")
 	compile fileTree(dir: '../libs', include: '*.jar')
+	compile 'com.android.support:multidex:1.0.0'
+	compile 'com.android.support:appcompat-v7:21.0.0'
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
