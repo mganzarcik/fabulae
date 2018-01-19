@@ -1,1 +1,13 @@
 language: android
+
+android:
+  components:
+    - build-tools-19.1.0
+    - android-19
+jdk: oraclejdk8
+
+# Cache gradle dependencies (should be faster to download them from cache)
+cache:
+  directories:
+  - $HOME/.gradle/wrapper
+- $HOME/.gradle/caches/modules-2/files-2.1
