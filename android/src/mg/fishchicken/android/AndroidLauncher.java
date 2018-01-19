@@ -1,5 +1,7 @@
 package mg.fishchicken.android;
 
+import android.os.Bundle;
+
 import mg.fishchicken.FishchickenGame;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
