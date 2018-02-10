@@ -136,109 +136,107 @@ function handleDialogueFileUpload(evt) {
   for (var i = 0, f; f = files[i]; i++) {
     var reader = new FileReader();
     document.getElementById('dialogue-id').value = f.name.replace(".xml", "");
-    reader.onload = (function(theFile) {
-      return function(e) {
-        var dialogueJson = $.xml2json(e.target.result, false, ["condition", "action"]);
-        var nodes = [];
-        var edges = [];
+    reader.onload = function(e) {
+      var dialogueJson = $.xml2json(e.target.result, false, ["condition", "action"]);
+      var nodes = [];
+      var edges = [];
 
-        function createEdge(fromId, toId, type) {
-          return {
-            from: fromId,
-            to: toId.indexOf(type) === 0 ? toId : type+toId,
-            arrows: {
-              to: true
-            },
-            smooth: {
-              enabled: false
-            }
-          }   ;
+      function createEdge(fromId, toId, type) {
+        return {
+          from: fromId,
+          to: toId.indexOf(type) === 0 ? toId : type+toId,
+          arrows: {
+            to: true
+          },
+          smooth: {
+            enabled: false
+          }
+        };
+      }
+
+      function createNodeAndEdges(item) {
+        var node = {};
+        var Utils = window.Utils;
+        node.f_type = type;
+        node.f_condition = item.condition;
+        node.f_action = item.action;
+        node.f_skills = item.skills;
+        node.f_dialogueEnd = item.endOfConversation === "true";
+        var id = item.id.indexOf(type) === 0 ? item.id : type+item.id;
+        node.f_id = id;
+        node.id = id;
+        var text = item.text ? (item.text[0] || (item.text || "")) : "";
+        var key = getLanguageFileKey(text);
+        if (window.languageFile && key && window.languageFile[key]) { 
+          text = window.languageFile[key];
         }
+        setNodeText(node, text);
 
-        function createNodeAndEdges(item) {
-          var node = {};
-          var Utils = window.Utils;
-          node.f_type = type;
-          node.f_condition = item.condition;
-          node.f_action = item.action;
-          node.f_skills = item.skills;
-          node.f_dialogueEnd = item.endOfConversation === "true";
-          var id = item.id.indexOf(type) === 0 ? item.id : type+item.id;
-          node.f_id = id;
-          node.id = id;
-          var text = item.text ? (item.text[0] || (item.text || "")) : "";
-          var key = getLanguageFileKey(text);
-          if (window.languageFile && key && window.languageFile[key]) { 
-            text = window.languageFile[key];
-          }
-          setNodeText(node, text);
+        var isGreeting = node.f_type === "greeting";
+        var isNPC = node.f_type === "npcTalk" || node.f_type === "pcSelector";
 
-          var isGreeting = node.f_type === "greeting";
-          var isNPC = node.f_type === "npcTalk" || node.f_type === "pcSelector";
-
-          node.shape = 'box';
-          node.color = isGreeting ? Utils.greetingColor : (isNPC ? Utils.npcColor : (node.f_dialogueEnd ? Utils.endColor : Utils.pcColor));
-          node.font = {size:20};
-          node.physics = true;
-          
-          if (item.pcTalk) {
-            if (item.pcTalk.id) {
-              edges.push(createEdge(node.id, item.pcTalk.id, "pcTalk"));
-            } else {
-              for (var k in item.pcTalk) {
-                edges.push(createEdge(node.id, item.pcTalk[k].id, "pcTalk"));
-              }
-            }
-          }
-
-          if (item.npcTalk) {
-            if (item.npcTalk.id) {
-              edges.push(createEdge(node.id, item.npcTalk.id, "npcTalk"));
-            } else {
-              for (var k in item.npcTalk) {
-                edges.push(createEdge(node.id, item.npcTalk[k].id, "npcTalk"));
-              }
-            }
-          }
-
-          if (item.pcSelector) {
-            if (item.pcSelector.id) {
-              edges.push(createEdge(node.id, item.pcSelector.id, "pcSelector"));
-            } else {
-              for (var k in item.pcSelector) {
-                edges.push(createEdge(node.id, item.pcSelector[k].id, "pcSelector"));
-              }
-            }
-          }
-
-          nodes.push(node);
-        }
-
-        for (var type in dialogueJson) {
-          if (!dialogueJson.hasOwnProperty(type)) {
-            continue;
-          }
-
-          var items = dialogueJson[type];
-
-          if (items.id) {
-            createNodeAndEdges(items);
+        node.shape = 'box';
+        node.color = isGreeting ? Utils.greetingColor : (isNPC ? Utils.npcColor : (node.f_dialogueEnd ? Utils.endColor : Utils.pcColor));
+        node.font = {size:20};
+        node.physics = true;
+        
+        if (item.pcTalk) {
+          if (item.pcTalk.id) {
+            edges.push(createEdge(node.id, item.pcTalk.id, "pcTalk"));
           } else {
-            for (var j in items) {
-              createNodeAndEdges(items[j]);
+            for (var k in item.pcTalk) {
+              edges.push(createEdge(node.id, item.pcTalk[k].id, "pcTalk"));
             }
           }
-
-          window.nodeCount = nodes.length + 1;
-
-          window.data = {
-            nodes: new vis.DataSet(nodes),
-            edges: new vis.DataSet(edges)
-          }
-          window.draw();
         }
-      };
-    })(f);
+
+        if (item.npcTalk) {
+          if (item.npcTalk.id) {
+            edges.push(createEdge(node.id, item.npcTalk.id, "npcTalk"));
+          } else {
+            for (var k in item.npcTalk) {
+              edges.push(createEdge(node.id, item.npcTalk[k].id, "npcTalk"));
+            }
+          }
+        }
+
+        if (item.pcSelector) {
+          if (item.pcSelector.id) {
+            edges.push(createEdge(node.id, item.pcSelector.id, "pcSelector"));
+          } else {
+            for (var k in item.pcSelector) {
+              edges.push(createEdge(node.id, item.pcSelector[k].id, "pcSelector"));
+            }
+          }
+        }
+
+        nodes.push(node);
+      }
+
+      for (var type in dialogueJson) {
+        if (!dialogueJson.hasOwnProperty(type)) {
+          continue;
+        }
+
+        var items = dialogueJson[type];
+
+        if (items.id) {
+          createNodeAndEdges(items);
+        } else {
+          for (var j in items) {
+            createNodeAndEdges(items[j]);
+          }
+        }
+
+        window.nodeCount = nodes.length + 1;
+
+        window.data = {
+          nodes: new vis.DataSet(nodes),
+          edges: new vis.DataSet(edges)
+        }
+        window.draw();
+      }
+    };
 
     reader.readAsText(f);
   }

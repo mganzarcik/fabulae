@@ -3,6 +3,10 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Fabulae dialogue editor</title>
 
+  <link rel="stylesheet" href="lib/codemirror/addon/hint/show-hint.css">
+  <link rel="stylesheet" href="lib/codemirror/codemirror.css">
+  <link href="lib/vis/vis.css" rel="stylesheet" type="text/css">
+
   <style type="text/css">
     body, select {
       font: 10pt sans;
@@ -72,6 +76,17 @@
     .vis-close {
       display: none !important;
     }
+    .CodeMirror {
+      height: auto;
+      min-height: 55px;
+    }
+    .CodeMirror-scroll {
+      margin-bottom: 0px !important;
+      overflow: initial !important;
+    }
+    .CodeMirror-hints {
+      z-index:400;
+    }
   </style>
 
   <script type="text/javascript" src="lib/jquery/jquery.js"></script>
@@ -80,11 +95,16 @@
   <script type="text/javascript" src="lib/jszip/jszip.js"></script>
   <script type="text/javascript" src="lib/jszip/FileSaver.js"></script>
   <script type="text/javascript" src="script/utils.js"></script>
+  <script type="text/javascript" src="script/schemas.js"></script>
   <script type="text/javascript" src="script/fileHandling.js"></script>
-
-  <link href="lib/vis/vis.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="lib/codemirror/codemirror.js"></script>
+  <script type="text/javascript" src="lib/codemirror/mode/xml.js"></script>
+  <script type="text/javascript" src="lib/codemirror/addon/hint/show-hint.js"></script>
+  <script type="text/javascript" src="lib/codemirror/addon/hint/xml-hint.js"></script>
 
   <script type="text/javascript">
+    var conditionInput;
+    var actionInput;
     var nodeCount = 1;
     var network = null;
     var data = {
@@ -134,14 +154,16 @@
             document.getElementById('node-id').value = "";
             document.getElementById('node-type').value = "pcTalk";
             document.getElementById('node-label').value = "";
-            document.getElementById('node-condition').value = "";
-            document.getElementById('node-action').value = "";
+            conditionInput.getDoc().setValue("");
+            actionInput.getDoc().setValue("");
             document.getElementById('node-dialogueEnd').checked = data.dialogueEnd;
             document.getElementById('node-skills').checked = "";
             document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
             document.getElementById('cancelButton').onclick = clearPopUp.bind();
             document.getElementById('network-popUp').style.display = 'block';
             document.getElementById('node-label').focus();
+            conditionInput.refresh();
+            actionInput.refresh();
           },
           editNode: function (data, callback) {
             // filling in the popup DOM elements
@@ -149,13 +171,15 @@
             document.getElementById('node-id').value = data.f_id;
             document.getElementById('node-type').value = data.f_type;
             document.getElementById('node-label').value = data.f_text || "";
-            document.getElementById('node-condition').value = data.f_condition || "";
-            document.getElementById('node-action').value = data.f_action || "";
+            conditionInput.getDoc().setValue(data.f_condition || " ");
+            actionInput.getDoc().setValue(data.f_action || " ");
             document.getElementById('node-skills').value = data.f_skills || "";
             document.getElementById('node-dialogueEnd').checked = data.f_dialogueEnd;
             document.getElementById('saveButton').onclick = saveData.bind(this, data, callback);
             document.getElementById('cancelButton').onclick = cancelEdit.bind(this,callback);
             document.getElementById('network-popUp').style.display = 'block';
+            conditionInput.refresh();
+            actionInput.refresh();
           },
           addEdge: function (data, callback) {
             if (data.from == data.to) {
@@ -217,8 +241,8 @@
       var typeChanged = data.f_type !== newType;
       data.f_type = newType;
       data.f_text = document.getElementById('node-label').value;
-      data.f_condition = document.getElementById('node-condition').value;
-      data.f_action = document.getElementById('node-action').value;
+      data.f_condition = conditionInput.getDoc().getValue().trim();
+      data.f_action = actionInput.getDoc().getValue().trim();
       data.f_dialogueEnd = document.getElementById('node-dialogueEnd').checked;
       data.f_skills = document.getElementById('node-skills').value;
 
@@ -245,11 +269,60 @@
       document.getElementById('dialogueFileButton').addEventListener('change', handleDialogueFileUpload, false);
       document.getElementById('languageFileButton').addEventListener('change', handleLanguageFileUpload, false);
       document.getElementById('exportButton').addEventListener('click', handleExport, false);
+
+      function completeAfter(cm, pred) {
+        var cur = cm.getCursor();
+        if (!pred || pred()) setTimeout(function() {
+          if (!cm.state.completionActive)
+            cm.showHint({completeSingle: false});
+        }, 100);
+        return CodeMirror.Pass;
+      }
+
+      function completeIfAfterLt(cm) {
+        return completeAfter(cm, function() {
+          var cur = cm.getCursor();
+          return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) == "<";
+        });
+      }
+
+      function completeIfInTag(cm) {
+        return completeAfter(cm, function() {
+          var tok = cm.getTokenAt(cm.getCursor());
+          if (tok.type == "string" && (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length == 1)) return false;
+          var inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
+          return inner.tagName;
+        });
+      }
+
+      var extraKeys = {
+        "'<'": completeAfter,
+        "'/'": completeIfAfterLt,
+        "' '": completeIfInTag,
+        "'='": completeIfInTag,
+        "Ctrl-Space": "autocomplete"
+      };
+
+      conditionInput = CodeMirror.fromTextArea(document.getElementById('node-condition'), {
+        mode: "application/xml",
+        viewportMargin: Infinity,
+        scrollbarStyle: null,
+        extraKeys: extraKeys,
+        hintOptions: {schemaInfo: Schemas.conditions}
+      });
+
+      actionInput = CodeMirror.fromTextArea(document.getElementById('node-action'), {
+        mode: "application/xml",
+        viewportMargin: Infinity,
+        scrollbarStyle: null,
+        extraKeys: extraKeys,
+        hintOptions: {schemaInfo: Schemas.actions }
+      });
     }
     
-    window.onbeforeunload = function(){
-	  return 'Are you sure you want to leave?';
-	};
+    window.onbeforeunload = function() {
+  	  return 'Are you sure you want to leave?';
+  	};
   </script>
 </head>
 
