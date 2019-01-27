@@ -585,9 +585,7 @@ public class GameMapLoader extends TiledMapLoader {
 				id = type;
 			}
 
-			GameCharacter character = null;
-
-			character = GameCharacter.loadCharacter(id,
+			GameCharacter character = GameCharacter.loadCharacter(id,
 					Gdx.files.internal(Configuration.getFolderCharacters() + type + ".xml"), gameMap);
 
 			if (role != null) {

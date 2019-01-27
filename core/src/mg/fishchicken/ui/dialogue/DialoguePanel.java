@@ -217,6 +217,9 @@ public class DialoguePanel extends BorderedWindow implements EventListener {
 		
 		if (nextNPTTalk == null || !dialogue.getPCAtDialogue().isActive()) {
 			UIManager.hideDialogue();
+			if (callback != null) {
+				callback.onDialogueEnd(pcTalkSelected);
+			}
 			return;
 		}
 		

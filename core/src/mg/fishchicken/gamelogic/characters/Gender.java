@@ -4,7 +4,7 @@ import static mg.fishchicken.gamelogic.characters.AbstractGameCharacter.STRING_T
 import mg.fishchicken.core.i18n.Strings;
 
 public enum Gender {
-	Male {
+	MALE {
 		@Override
 		public String getPronoun() {
 			return Strings.getString(STRING_TABLE,"MalePronoun");
@@ -20,7 +20,7 @@ public enum Gender {
 			return Strings.getString(STRING_TABLE,"MalePossesivePronoun");
 		}
 	},
-	Female {
+	FEMALE {
 		@Override
 		public String getPronoun() {
 			return Strings.getString(STRING_TABLE,"FemalePronoun");
@@ -34,7 +34,7 @@ public enum Gender {
 			return Strings.getString(STRING_TABLE,"FemalePossesivePronoun");
 		}
 	},
-	None {
+	NONE {
 		@Override
 		public String getPronoun() {
 			return Strings.getString(STRING_TABLE,"NeutralPronoun");

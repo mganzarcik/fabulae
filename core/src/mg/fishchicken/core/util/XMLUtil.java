@@ -567,7 +567,7 @@ public class XMLUtil {
 						} else if (Skill.class.equals(fieldType)) {
 							field.set(object, Skill.valueOf(xmlValue.toUpperCase(Locale.ENGLISH)));
 						} else if (Gender.class.equals(fieldType)) {
-							field.set(object, Gender.valueOf(xmlValue));
+							field.set(object, Gender.valueOf(xmlValue.toUpperCase(Locale.ENGLISH)));
 						} else if (Race.class.equals(fieldType)) {
 							field.set(object, Race.getRace(xmlValue));
 						} else if (Chatter.class.equals(fieldType)) {

@@ -75,7 +75,7 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Replaces all occurences of <characterName(CHARACTER_ID)> with the actual
+	 * Replaces all occurrences of <characterName(CHARACTER_ID)> with the actual
 	 * names of characters with those IDs in the String.
 	 * 
 	 * The character must have already been loaded prior to this. 

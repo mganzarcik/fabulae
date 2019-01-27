@@ -384,6 +384,7 @@ public class CharacterCreationWindow extends BorderedWindow {
 		character.setDescription(nameField.getText());
 		character.setPortraitFile(portraitField.getSelected());
 		if (!editOnly) {
+			character.setActive(false);
 			character.stats().setGender(genderField.getSelected().value);
 			if (roleField != null && roleField.getSelected() != null) {
 				Role currentRole = character.getRole();
@@ -415,6 +416,7 @@ public class CharacterCreationWindow extends BorderedWindow {
 			// model must be set before inventory is manipulated and after stats are set
 			character.setModel(modelField.getSelected(), audioProfileField.getSelected());
 			race.getInventory().copyAllItemsTo(character.getInventory());
+			character.setActive(true);
 		} else {
 			character.setModel(modelField.getSelected(), audioProfileField.getSelected());
 		}

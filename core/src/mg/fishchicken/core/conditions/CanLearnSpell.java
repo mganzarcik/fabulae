@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.XmlReader.Element;
  * Example:
  * 
  * <pre>
- * &lt;hasSpell id = "Fireball" /&gt;
+ * &lt;canLearnSpell id = "Fireball" /&gt;
  * </pre>
  * @author ANNUN
  *

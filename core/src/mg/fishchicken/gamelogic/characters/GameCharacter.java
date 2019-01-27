@@ -22,6 +22,7 @@ import com.badlogic.gdx.utils.XmlWriter;
 
 import groovy.lang.Binding;
 import mg.fishchicken.audio.AudioProfile;
+import mg.fishchicken.core.BasicCallback;
 import mg.fishchicken.core.GameObject;
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.assets.AssetMap;
@@ -176,6 +177,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	private IntMap<ItemAnimationMap> itemAnimationMaps;
 	private IntMap<ItemModel> itemModels;
 	private IntMap<Animation> itemAnimations;
+	private Array<BasicCallback> drawActions;
 	private GameCharacterBrain brain;
 	
 	/**
@@ -238,6 +240,7 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		effects = new ObjectMap<String, PersistentEffect>();
 		perks = new Array<Perk>();
 		spells = new Array<Spell>();
+		drawActions = new Array<BasicCallback>();
 		survival = new Survival(gameState, GameState.getPlayerCharacterGroup(), stats);
 		survival.addObserver(new Observer<Survival, Survival.SurvivalChange>() {
 			@Override
@@ -509,11 +512,19 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 	
 	@Override
 	public void draw(GameMapRenderer renderer, float deltaTime) {
+		executeDrawActions();
 		super.draw(renderer, deltaTime);
 		if (getModel().isPaperdoll()) {
 			drawPaperdoll(renderer, deltaTime, PAPER_DOLL_RENDER_ORDER_BODY);
 		}
 		drawPaperdoll(renderer, deltaTime, PAPER_DOLL_RENDER_ORDER_HANDS);
+	}
+	
+	private void executeDrawActions() {
+		for (BasicCallback drawAction : drawActions) {
+			drawAction.callback();
+		}
+		drawActions.clear();
 	}
 	
 	private void drawPaperdoll(GameMapRenderer renderer, float deltaTime, int[] slots) {
@@ -1350,19 +1361,29 @@ public class GameCharacter extends AbstractGameCharacter implements XMLLoadable,
 		}
 	}
 	
-	public void addItemModel(ItemModel model, int slot) {
-		model.loadAssets();
+	public void addItemModel(final ItemModel model, final int slot) {
 		ItemAnimationMap animations = model.getAnimationMapInstance();
 		animations.setSpeed(getSpeed());
 		itemAnimationMaps.put(slot, animations);
 		itemModels.put(slot, model);
+		drawActions.add(new BasicCallback() {
+			@Override
+			public void callback() {
+				model.loadAssets();
+			}
+		});
 	}
 	
 	public void removeItemModel(int slot) {
 		itemAnimationMaps.remove(slot);
-		ItemModel model = itemModels.remove(slot);
+		final ItemModel model = itemModels.remove(slot);
 		if (model != null) {
-			model.unloadAssets();
+			drawActions.add(new BasicCallback() {
+				@Override
+				public void callback() {
+					model.unloadAssets();
+				}
+			});
 			updatePaperDollAnimations();
 		}
 	}

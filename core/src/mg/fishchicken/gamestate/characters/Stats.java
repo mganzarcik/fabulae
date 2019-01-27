@@ -60,7 +60,7 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 	private float s_perkPoints;
 	private float s_skillPoints;
 	private ObjectMap<Skill, Integer> skillIncreasesThisLevel;
-	private Array<Modifier> modifiers, armorModifiers;
+	private Array<Modifier> modifiers;
 	private Skills skills;
 	private GameCharacter character;
 	private Inventory inventory;
@@ -69,10 +69,9 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 	
 	public Stats(GameCharacter character, Inventory inventory) {
 		s_level = 1;
-		s_gender = Gender.Male; // default value
+		s_gender = Gender.MALE; // default value
 		skillIncreasesThisLevel = new ObjectMap<Skill, Integer>();
 		modifiers = new Array<Modifier>();
-		armorModifiers = new Array<Modifier>();
 		skills = new Skills(this);
 		skills.addObserver(new Observer<Skills, Skills.SkillChange>() {
 			@Override
@@ -393,11 +392,11 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 			encubranceMod = 0;
 		}
 		if (encubranceMod != 0) {
-			Modifier encumbranceModifier = new Modifier("encumberanceModifierHelloHelpIAmStuckInTheIDGenerator", Strings.getString(GameCharacter.STRING_TABLE, "Encumberance")); 
+			Modifier encumbranceModifier = new Modifier("__encumberanceModifier###", Strings.getString(GameCharacter.STRING_TABLE, "Encumberance")); 
 			encumbranceModifier.setMod(ModifiableStat.ACTIONPOINTS, -encubranceMod);
 			addModifier(encumbranceModifier);
 		} else {
-			removeModifier("encumberanceModifierHelloHelpIAmStuckInTheIDGenerator");
+			removeModifier("__encumberanceModifier###");
 		}
 		updateArmorModifiers();
 		changed(null);
@@ -453,8 +452,21 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 		onModifierChange();
 	}
 	
+	/**
+	 * Removes a single modifier that is the same as the supplied modifier.
+	 * 
+	 * Sameness is determined by calling the {@link Modifier#isSameAs(Modifier)} method,
+	 * @param modifier
+	 */
 	public void removeModifier(Modifier modifier) {
-		modifiers.removeValue(modifier, false);
+		Iterator<Modifier> iterator = modifiers.iterator();
+		while (iterator.hasNext()) {
+			Modifier mod = iterator.next();
+			if (mod.isSameAs(modifier)) {
+				iterator.remove();
+				break;
+			}
+		}
 		onModifierChange();
 	}
 	
@@ -739,22 +751,18 @@ public class Stats extends ObservableState<Stats, Stats.StatChange> implements M
 	 * @return
 	 */
 	public void updateArmorModifiers() {
-		for (int i = 0; i < armorModifiers.size; ++i) {
-			removeModifier(armorModifiers.get(i));
-		}
-		armorModifiers.clear();
-		
+		removeModifier("__armorClassModifier###");
 		ArmorClass ac = getWornArmorClass(inventory.getAllEquippedArmor());
 		Iterator<Modifier> modifiers = Configuration.getModifiersForArmorClass(ac, skills.getSkillRank(Skill.ARMOR));
 		while (modifiers.hasNext()) {
-			Modifier mod = modifiers
+			addModifier(modifiers
 					.next()
 					.copy()
 					.setName(
 							Strings.getString(GameCharacter.STRING_TABLE, "WearingArmor",
-									Strings.getString(InventoryItem.STRING_TABLE, ac.toString())));
-			addModifier(mod);
-			armorModifiers.add(mod);
+									Strings.getString(InventoryItem.STRING_TABLE, ac.toString())))
+					.setId("__armorClassModifier###")
+			);
 		}
 			
 	}

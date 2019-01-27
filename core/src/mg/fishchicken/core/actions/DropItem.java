@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.XmlReader.Element;
 /**
  * Drops the item with the supplied ID to the ground. If the item
  * is currently in the character's inventory, it will be dropped from there.
- * If the character does not posses this item, a new one will be created and dropped.
+ * If the character does not possess this item, a new one will be created and dropped.
  * <br /><br />
  * Example:
  * 

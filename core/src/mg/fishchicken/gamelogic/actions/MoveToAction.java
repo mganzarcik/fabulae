@@ -113,6 +113,8 @@ public class MoveToAction extends BasicAction {
 		if (targetX >= 0 && targetY >= 0 && character.getMap() != null) {
 			calculatePathIfRequired();
 			finishIfNoMoreSteps();
+		} else {
+			isFinished = true;
 		}
 	}
 	

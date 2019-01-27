@@ -10,6 +10,7 @@ import mg.fishchicken.core.util.StringUtil;
 import mg.fishchicken.core.util.XMLUtil;
 
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Entry;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.badlogic.gdx.utils.XmlWriter;
 import com.badlogic.gdx.utils.StringBuilder;
@@ -64,17 +65,6 @@ public class Modifier implements XMLSaveable, ThingWithId {
 		this();
 		s_name = name;
 		s_id = id;
-	}
-	
-	/**
-	 * Creates a new modifier with all mods
-	 * defaulted to zero. 
-	 */
-	public Modifier(String id, String name, boolean visible) {
-		this();
-		s_name = name;
-		s_id = id;
-		s_visible = false;
 	}
 	
 	/**
@@ -350,6 +340,23 @@ public class Modifier implements XMLSaveable, ThingWithId {
 		return copy;
 	}
 	
+	public boolean isSameAs(Modifier other) {
+		return other.s_id == s_id && other.s_name.equals(s_name) && other.s_visible == s_visible && equalModsWith(other);
+	}
+	
+	private boolean equalModsWith(Modifier other) {
+		if (mods.size != other.mods.size) {
+			return false;
+		}
+		for (Entry<ModifiableStat,Float> entry : mods.entries()) {
+			Float otherMod = other.mods.get(entry.key);
+			if (!otherMod.equals(entry.value)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Prints all the Modifiers in the suppled ModifierContainer
 	 * in a user-friendly String. The supplied separator
@@ -378,4 +385,6 @@ public class Modifier implements XMLSaveable, ThingWithId {
 		StringUtil.freeFSB(builder);
 		return returnValue;
 	}
+	
+	
 }

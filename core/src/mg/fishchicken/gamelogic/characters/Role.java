@@ -168,14 +168,7 @@ public class Role implements XMLLoadable, ThingWithId {
 		if (gendersElement != null) {
 			String[] genders = gendersElement.getText().split(",");
 			for (String gender: genders) {
-				gender = gender.trim();
-				for (Gender g : Gender.values()) {
-					if (!this.genders.contains(g, true)
-							&& g.name().toLowerCase(Locale.ENGLISH)
-									.equals(gender)) {
-						this.genders.add(g);
-					}
-				}
+				this.genders.add(Gender.valueOf(gender.trim().toUpperCase(Locale.ENGLISH)));
 			}
 		}
 	}

@@ -53,6 +53,7 @@ public abstract class Inventory implements AssetContainer, XMLSaveable  {
 	public static final String XML_ATTRIBUTE_GROUPS = "groups";
 	public static final String XML_ATTRIBUTE_SLOT = "slot";
 	public static final String XML_ATTRIBUTE_STACK_SIZE = "stackSize";
+	public static final String XML_ATTRIBUTE_INTERNAL_ID = "internalId";
 	public static final String XML_ATTRIBUTE_OWNER_CHARACTER = "ownerCharacter";
 	public static final String XML_ATTRIBUTE_OWNER_FACTION= "ownerFaction";
 	public static final String XML_ATTRIBUTE_OWNER_FIXED = "ownerFixed";
@@ -584,7 +585,6 @@ public abstract class Inventory implements AssetContainer, XMLSaveable  {
 		}
 		writer.pop();
 	}
-
 
 	/**
 	 * Read the inventory from the suppled XML element.

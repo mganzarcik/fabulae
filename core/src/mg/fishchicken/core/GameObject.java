@@ -821,6 +821,11 @@ public abstract class GameObject implements ActionsContainer, VariableContainer,
 		return !isActive();
 	}
 
+	/**
+	 * Sets this game object as active or not. Inactive game objects
+	 * do not update their actions and do not handle position changes.
+	 * @return
+	 */
 	public void setActive(boolean active) {
 		s_active = active;
 	}

@@ -234,7 +234,7 @@ public class LoadingMapScreen extends BasicStageScreen {
 	/**
 	 * This uses AssetManager to asynchronously load the map and all assets.
 	 * 
-	 * It will return true only once everything is loaded.
+	 * It will return null only once everything is loaded.
 	 * 
 	 * This should be called repeatedly from the render method until true is
 	 * returned.

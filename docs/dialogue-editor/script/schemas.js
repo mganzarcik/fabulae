@@ -41,6 +41,12 @@ Schemas = (function() {
         id: null
       }
     },
+    genderEqualTo: { 
+        attrs: {
+          gender: null,
+          targetObject: targetObjectAttr
+        }
+      },
     hasItem: { 
       attrs: {
         item: null, 

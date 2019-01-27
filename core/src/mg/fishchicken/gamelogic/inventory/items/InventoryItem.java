@@ -401,7 +401,7 @@ public abstract class InventoryItem implements AssetContainer, ModifierContainer
 	
 	/**
 	 * Whether or not this item is infinite, i.e. there are
-	 * infinite items on it's stack.
+	 * infinite items on its stack.
 	 *  
 	 * @return
 	 */
@@ -638,7 +638,7 @@ public abstract class InventoryItem implements AssetContainer, ModifierContainer
 	public void setCostPerItem(int cost) {
 		s_cost = cost;
 	}
-
+	
 	public void loadFromXML(FileHandle file) throws IOException {
 		loadFromXMLNoInit(file);
 	}
