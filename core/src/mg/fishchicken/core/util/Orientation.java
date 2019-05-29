@@ -229,7 +229,7 @@ public enum Orientation {
 	}
 	
 	/**
-	 * Calculates the OrientationUtil the mover needs to have
+	 * Calculates the Orientation the mover needs to have
 	 * in order to move xDif, yDif points on the map.
 	 *  
 	 * @param isometric - if true, the orientation will be calculated in the orthogonal system, otherwise isometric will be used
@@ -265,7 +265,7 @@ public enum Orientation {
 	}
 	
 	/**
-	 * Calculates the facing OrientationUtil if looking from point [fromX, fromY]
+	 * Calculates the facing Orientation if looking from point [fromX, fromY]
 	 * at point [toX, toY] on the map.
 	 *  
 	 * @param isometric - if true, the orientation will be calculated in the orthogonal system, otherwise isometric system will be used
@@ -285,7 +285,7 @@ public enum Orientation {
 	}
 	
 	/**
-	 * Calculates the OrientationUtil the origin GO needs to have in order to face the target GO.
+	 * Calculates the Orientation the origin GO needs to have in order to face the target GO.
 	 *  
 	 * @param origin
 	 * @param target

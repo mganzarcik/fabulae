@@ -37,6 +37,8 @@ public class ItemOwner extends ObservableState<ItemOwner, ItemOwner.ItemOwnerPar
 		set(ownerToCopy);
 	}
 	
+	// If an item owner is fixed, it will not change when the item is legally sold.
+	// This means the item cannot be "laundered". Usually used for very rare and well known items.
 	public boolean isFixed() {
 		return s_isFixed;
 	}
@@ -94,6 +96,12 @@ public class ItemOwner extends ObservableState<ItemOwner, ItemOwner.ItemOwnerPar
 		if (s_ownerCharacterId != null && s_ownerCharacterId.equalsIgnoreCase(character.getId())) {
 			return true;
 		}
+		
+		if (character.isMemberOfPlayerGroup()
+				&& GameState.getPlayerCharacterGroup().containsPlayerCharacter(s_ownerCharacterId)) {
+			return true;
+		}
+		
 		return CoreUtil.equals(s_ownerFaction,
 				character.getFaction());
 	}
