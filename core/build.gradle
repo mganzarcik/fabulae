@@ -1,11 +1,20 @@
-apply plugin: "java"
-
-sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+eclipse.project.name = appName + '-core'
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+dependencies {
+  api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
+  if(enableGraalNative == 'true') {
+    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
+  }
+  
+	implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+	implementation "org.codehaus.groovy:groovy-all:2.3.0"
+	implementation fileTree(dir: '../libs', include: '*.jar')
+	implementation "com.opencsv:opencsv:3.3"
+	implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+}
 
-eclipse.project {
-    name = appName + "-core"
+jar {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

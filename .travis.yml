@@ -1,7 +1,0 @@
-language: android # can be 'java' if there is no android build target
-android:
-  components:
-    - build-tools-19.1.0
-    - android-19
-jdk: oraclejdk8
-script: ./gradlew :desktop:build
