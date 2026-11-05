@@ -1,13 +1,5 @@
 package mg.fishchicken.screens;
 
-import mg.fishchicken.FishchickenGame;
-import mg.fishchicken.core.assets.Assets;
-import mg.fishchicken.core.configuration.Configuration;
-import mg.fishchicken.core.logging.ConsoleLogger;
-import mg.fishchicken.ui.SkinWithTrueTypeFonts;
-import mg.fishchicken.ui.WindowPosition;
-import mg.fishchicken.ui.selectbox.SelectOption;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -22,28 +14,34 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Array;
 
+import mg.fishchicken.FishchickenGame;
+import mg.fishchicken.core.configuration.Configuration;
+import mg.fishchicken.ui.SkinWithTrueTypeFonts;
+import mg.fishchicken.ui.WindowPosition;
+import mg.fishchicken.ui.selectbox.SelectOption;
+
 public class ModuleSelectionScreen extends BasicStageScreen implements EventListener {
 
 	public static final String SKIN_PATH = "uiStyle.json";
 	private FishchickenGame game;
 	private Skin skin;
 	private SelectBox<SelectOption<String>> moduleSelectBox;
-	
+
 	public ModuleSelectionScreen(FishchickenGame game) {
 		super();
 		this.skin = new SkinWithTrueTypeFonts(Gdx.files.internal(ModuleSelectionScreen.SKIN_PATH));
 		this.game = game;
 		Array<FileHandle> modules = getModules();
-		
+
 		Window window = new Window("Module selection", skin);
 		window.pad(30, 10, 10, 10);
 		window.setModal(true);
 		window.setMovable(false);
-		
+
 		TextButton exitButton = new TextButton("Exit", skin);
 		exitButton.addListener(this);
 		exitButton.setName("EXIT");
-		
+
 		if (modules == null) {
 			window.add(new Label("No modules found.", skin)).padBottom(20).padTop(10);
 			window.row();
@@ -52,15 +50,15 @@ public class ModuleSelectionScreen extends BasicStageScreen implements EventList
 			moduleSelectBox = new SelectBox<SelectOption<String>>(skin.get(SelectBoxStyle.class));
 			Array<SelectOption<String>> options = new Array<SelectOption<String>>();
 			for (FileHandle moduleDir : modules) {
-				SelectOption<String> option = new SelectOption<String>(" "+moduleDir.name(), moduleDir.name());
+				SelectOption<String> option = new SelectOption<String>(" " + moduleDir.name(), moduleDir.name());
 				options.add(option);
 			}
 			moduleSelectBox.setItems(options);
-			
+
 			TextButton okButton = new TextButton("Ok", skin);
 			okButton.addListener(this);
 			okButton.setName("OK");
-			
+
 			window.add(new Label("Please choose a module:", skin)).padBottom(10).padTop(10).left();
 			window.row();
 			window.add(moduleSelectBox).padBottom(20).center().minWidth(170);
@@ -82,7 +80,7 @@ public class ModuleSelectionScreen extends BasicStageScreen implements EventList
 				dispose();
 				Gdx.app.exit();
 			} else if ("OK".equals(event.getTarget().getName())) {
-				SelectOption<String> selected = moduleSelectBox.getSelected(); 
+				SelectOption<String> selected = moduleSelectBox.getSelected();
 				if (selected != null) {
 					FileHandle currentModuleFile = Gdx.files.local(Configuration.FILE_LAST_MODULE);
 					currentModuleFile.writeString(selected.value, false);
@@ -94,15 +92,9 @@ public class ModuleSelectionScreen extends BasicStageScreen implements EventList
 		}
 		return false;
 	}
-	
+
 	public static final Array<FileHandle> getModules() {
 		FileHandle modulesFolder = Gdx.files.internal(Configuration.FOLDER_MODULES);
-		ConsoleLogger.get().logMessage("Initial modules folder: " + modulesFolder.file().getAbsolutePath());
-		if (!modulesFolder.isDirectory()) {
-			modulesFolder = Gdx.files.internal(Assets.BIN_FOLDER+Configuration.FOLDER_MODULES);
-			
-		}
-		ConsoleLogger.get().logMessage("Final modules folder: " + modulesFolder.file().getAbsolutePath()); 
 		Array<FileHandle> returnValue = new Array<FileHandle>();
 		if (!modulesFolder.isDirectory()) {
 			return null;
@@ -115,7 +107,7 @@ public class ModuleSelectionScreen extends BasicStageScreen implements EventList
 		}
 		return returnValue;
 	}
-	
+
 	@Override
 	public void dispose() {
 		super.dispose();

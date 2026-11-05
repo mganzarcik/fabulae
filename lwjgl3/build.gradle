@@ -34,7 +34,7 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-  implementation "org.codehaus.groovy:groovy-all:2.3.0"
+  implementation "org.apache.groovy:groovy-all:4.0.33"
   implementation project(':core')
 
   if(enableGraalNative == 'true') {

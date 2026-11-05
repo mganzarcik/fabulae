@@ -3,7 +3,6 @@ package mg.fishchicken.maps;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.maps.ImageResolver;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
@@ -56,26 +55,24 @@ public class TiledMapLoader extends TmxMapLoader {
 	 * @param tmxFile the Filehandle of the tmx file
 	 * @param imageResolver the {@link ImageResolver}
 	 */
-	protected void loadTileSet(TiledMap map, Element element, FileHandle tmxFile, ImageResolver imageResolver) {
-		// TODO UNSURE
-		super.loadTileSet(element, tmxFile, imageResolver);
+	public TiledMapTileSet loadTileSet(Element element, FileHandle tmxFile, ImageResolver imageResolver) {
+		TiledMapTileSet tileset = super.loadTileSet(element, tmxFile, imageResolver);
 		
 		if (element.getName().equals("tileset")) {
 			String name = element.get("name", null);
 			if (name == null) {
-				return;
+				return tileset;
 			}
-			TiledMapTileSet ts = map.getTileSets().getTileSet(name);
 			Element offsets = element.getChildByName("tileoffset");		
 			int xOffset = offsets == null ? 0 :  Integer.parseInt(offsets.getAttribute("x", "0"));
 			int yOffset = offsets == null ? 0 : Integer.parseInt(offsets.getAttribute("y", "0"));
 			
-			ts.getProperties().put("xoffset", xOffset);
-			ts.getProperties().put("yoffset", yOffset);
-			int id = ts.getProperties().get("firstgid", Integer.class);
+			tileset.getProperties().put("xoffset", xOffset);
+			tileset.getProperties().put("yoffset", yOffset);
+			int id = tileset.getProperties().get("firstgid", Integer.class);
 			// put the offsets as properties into each tile and load animated tiles
-			for (int i = id; i < id+ts.size(); ++i) {
-				TiledMapTile tile = ts.getTile(i);
+			for (int i = id; i < id+tileset.size(); ++i) {
+				TiledMapTile tile = tileset.getTile(i);
 				tile.getProperties().put("xoffset", xOffset);
 				tile.getProperties().put("yoffset", yOffset);
 				if (tile.getProperties().get("animationFrames") != null) {
@@ -90,21 +87,22 @@ public class TiledMapLoader extends TmxMapLoader {
 						String[] startEnd = animationFrames.split("-");
 						int end = Integer.valueOf(startEnd[1]);
 						for (int j = Integer.valueOf(startEnd[0]); j < end; ++j) {
-							StaticTiledMapTile frame = (StaticTiledMapTile)ts.getTile(i+j);
+							StaticTiledMapTile frame = (StaticTiledMapTile)tileset.getTile(i+j);
 							frameTiles.add(frame);
 						}
 					} else {
 						for (String frameId : animationFrames.split(",")) {
-							StaticTiledMapTile frame = (StaticTiledMapTile)ts.getTile(i+Integer.parseInt(frameId.trim()));
+							StaticTiledMapTile frame = (StaticTiledMapTile)tileset.getTile(i+Integer.parseInt(frameId.trim()));
 							frameTiles.add(frame);
 						}
 					}
 					AnimatedTile aTile = new AnimatedTile((1f/fps),frameTiles,randomDelay, randomAnimation);
 					aTile.getProperties().putAll(tile.getProperties());
-					ts.putTile(i, aTile);
+					tileset.putTile(i, aTile);
 				}
 			}
-		}		
+		}	
+		return tileset;
 	}
 	
 	protected Cell createTileLayerCell (boolean flipHorizontally, boolean flipVertically, boolean flipDiagonally) {

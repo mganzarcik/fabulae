@@ -2,6 +2,10 @@ package mg.fishchicken.gamelogic.actions;
 
 import java.io.IOException;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.XmlReader.Element;
+import com.badlogic.gdx.utils.XmlWriter;
+
 import mg.fishchicken.core.GameState;
 import mg.fishchicken.core.UsableGameObject;
 import mg.fishchicken.core.configuration.Configuration;
@@ -13,13 +17,10 @@ import mg.fishchicken.gamelogic.characters.CharacterFilter;
 import mg.fishchicken.gamelogic.characters.GameCharacter;
 import mg.fishchicken.gamelogic.characters.GameCharacter.Skill;
 import mg.fishchicken.gamelogic.characters.SkillCheckModifier;
+import mg.fishchicken.gamelogic.inventory.items.InventoryItem;
 import mg.fishchicken.gamelogic.traps.TrapType;
 import mg.fishchicken.gamestate.Tile;
 import mg.fishchicken.gamestate.locks.Lock;
-
-import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.XmlReader.Element;
-import com.badlogic.gdx.utils.XmlWriter;
 
 /**
  * Moves the GameCharacter to target UsableGameObject and uses it. If the
@@ -67,6 +68,30 @@ public class UseGameObjectAction extends MoveToAction implements SkillCheckModif
 		int targetY = ground.getY();
 		super.init(character, targetX, targetY, !targetGameObject.hasSprite() || character.getMap().blocked(character, targetX, targetY));
 	}
+	
+	private InventoryItem getKey(Lock lock, GameCharacter character) {
+		String keyId = lock.getKeyId();
+		if (keyId == null) {
+			return null;
+		}
+		
+		InventoryItem key = character.getInventory().getItem(keyId);
+		
+		// check the junk inventory for keys as well
+		if (key == null && GameState.getPlayerCharacterGroup().containsCharacter(character)) {
+			key = GameState.getPlayerCharacterGroup().getInventory().getItem(keyId);
+		}
+		
+		return key;
+	}
+	
+	private boolean canUse(Lock lock, GameCharacter character) {		
+		if (!lock.isLocked()) {
+			return true;
+		}
+				
+		return getKey(lock, character) != null;
+	}
 
 	@Override
 	public void update(float deltaTime) {
@@ -81,14 +106,14 @@ public class UseGameObjectAction extends MoveToAction implements SkillCheckModif
 			if (MathUtil.isNextToOrOnTarget(character, targetGameObject.getGround())) {
 				Lock lock = targetGameObject.getLock();
 				GameCharacter representative = character.getRepresentative();
-				if (!lock.isLocked()
-						|| (lock.getKeyId() != null && representative.getInventory().getItem(lock.getKeyId()) != null)) {
+				if (canUse(lock, representative)) {
 					// if the usable was locked with a specific key, we unlock
 					// it for good
-					if (lock.isLocked() && lock.getKeyId() != null) {
+					InventoryItem key = getKey(lock, representative);
+					if (lock.isLocked() && key != null) {
 						lock.setLocked(false);
 						Log.logLocalized(STRING_TABLE, "unlocked", LogType.INFO, representative.getName(),
-								targetGameObject.getName(), representative.getInventory().getItem(lock.getKeyId()).getName());
+								targetGameObject.getName(), key.getName());
 					}
 					if (!GameState.isCombatInProgress()
 							|| representative.stats().getAPAct() >= targetGameObject.getApCostToUse()) {

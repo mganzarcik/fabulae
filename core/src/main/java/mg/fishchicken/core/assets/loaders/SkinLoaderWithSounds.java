@@ -1,9 +1,5 @@
 package mg.fishchicken.core.assets.loaders;
 
-import mg.fishchicken.core.assets.Assets;
-import mg.fishchicken.core.logging.ConsoleLogger;
-import mg.fishchicken.ui.SkinWithTrueTypeFonts;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
@@ -16,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Entry;
+
+import mg.fishchicken.core.assets.Assets;
+import mg.fishchicken.ui.SkinWithTrueTypeFonts;
 
 /**
  * This will also load any files loaded in the "sounds" directory located with 
@@ -34,7 +33,6 @@ public class SkinLoaderWithSounds extends SkinLoader {
 
 	@Override
 	public Skin loadSync (AssetManager manager, String fileName, FileHandle file, SkinParameter parameter) {
-		ConsoleLogger.get().logMessage("Style file path: " + file.file().getAbsolutePath());
 		String textureAtlasPath = file.pathWithoutExtension() + ".atlas";
 		ObjectMap<String, Object> resources = null;
 		if (parameter != null) {
